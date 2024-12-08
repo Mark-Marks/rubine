@@ -72,5 +72,9 @@ Before the initial release, the following need to be done:
 - [ ] Packaging
   - [ ] Pesde luau package
   - [ ] Wally roblox package
-- [ ] Extendebility
+- [ ] Extensibility
 - [ ] Built-in Roblox scheduling extension
+
+## Mentions
+
+Abstractions were inspired by the ecs agnostic [Planck scheduler](https://github.com/YetAnotherClown/Planck)
