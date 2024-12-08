@@ -1,0 +1,18 @@
+[package]
+name = "mark-marks/rubine"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+license = "MIT"
+exclude = ["**"]
+include = [
+    "default.project.json",
+    "dist",
+    "dist/**",
+    "LICENSE",
+    "wally.toml",
+    "README.md",
+]
+
+[dependencies]
+jecs = "ukendio/jecs@0.4.0"
