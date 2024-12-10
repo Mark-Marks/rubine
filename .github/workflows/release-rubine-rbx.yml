@@ -24,7 +24,7 @@ jobs:
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
-          name: rbx-build
+          name: build
           path: build.rbxm
 
   release:
@@ -40,7 +40,7 @@ jobs:
       - name: Download Build
         uses: actions/download-artifact@v3
         with:
-          name: rbx-build
+          name: build
           path: build
 
       - name: Rename Build
