@@ -8,72 +8,60 @@ An ergonomic, runtime agnostic scheduler for [Jecs](https://github.com/ukendio/j
 
 </div>
 
-## Usage
+## Features
 
 Rubine provides two schedulers - one with a fairly low level interface abstracting over directly adding entities and setting components,
 and another abstracting over the low level one, with a "higher level" scheduler and utilities for phases.
 
-As for other abstractions:
-- Pipes
-```luau
-local my_pipe = abstractions.pipe()
+Both can be used alongside each other, although some abstractions require to be "built" first.
 
-abstracted_scheduler:with_pipe(my_pipe, my_event)
--- or
+In the case of pipes, they have to be either included within the abstracted scheduler
+```luau
+abstracted_scheduler
+    :with_pipe(my_pipe, my_event)
+```
+or registered as a phase
+```luau
 scheduler.phase(my_pipe, my_event)
-
-abstracted_scheduler:with_system(function() end, my_pipe)
--- Pipes are strings with their name. As long as they're registered with either scheduler, they can be used with the low level one.
-scheduler.on(my_pipe, function() end)
 ```
-- Pipelines
+
+In the case of pipelines, they have to be either included within the abstracted scheduler
 ```luau
-local pipe_a = abstractions.pipe()
-local pipe_b = abstractions.pipe()
-
--- Abstracted scheduler:
-
-local my_pipeline = abstractions.pipeline()
-    :with(pipe_a)
-    :with(pipe_b)
-
-abstracted_scheduler:with_pipeline(my_pipeline, my_event)
-
--- Low level scheduler:
-
-local my_pipeline = abstractions.pipeline()
-    :with(pipe_a)
-    :with(pipe_b)
-    :build(my_event)
-
-...
-
--- Works, pipeline was built and all pipes were registered
-scheduler.on(pipe_a, function() end)
-abstracted_scheduler:with_system(function() end, pipe_a)
+abstracted_scheduler
+    :with_pipeline(my_pipeline, my_event)
+```
+or built
+```luau
+my_pipeline:build(my_event)
 ```
 
-Some examples can be found in the `test/` directory.
+The abstracted scheduler starts the low level one by itself, so don't use both start functions together.
 
 ## Installation
 
-Rubine can currently only be installed via [pesde](https://pesde.dev) git dependencies:
-```sh
-pesde add gh#mark-marks/rubine#main
+### Pesde
+1. `pesde add mark_marks/rubine` -- In case of release candidates, do `pesde add mark_marks/rubine@VERSION-rc.WHICH_RC`
+2. `pesde install`
+
+### Wally
+1. Add it to your wally manifest
+```toml
+[dependencies]
+rubine = "mark-marks/rubine@LATEST" # Replace LATEST with the latest version
 ```
-When it's ready for an initial release, it'll be available on both pesde and wally.
+2. `wally install`
 
 ## Todo
 
-Before the initial release, the following need to be done:
+Before the 0.1.0 release, the following need to be done:
 
 - [ ] Unit tests
-- [ ] Automatic CI & CD
-- [ ] Packaging
-  - [ ] Pesde luau package
-  - [ ] Wally roblox package
-- [ ] Extensibility
-- [ ] Built-in Roblox scheduling extension
+- [x] Automatic CI & CD
+- [x] Packaging
+  - [x] Pesde luau package
+  - [x] Wally roblox package
+- [x] Extensibility
+- [x] Built-in Roblox scheduling extension
 
 ## Mentions
 

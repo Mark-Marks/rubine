@@ -2,7 +2,7 @@ name = "mark_marks/rubine"
 version = "0.1.0-rc.0"
 description = "An ergonomic, runtime agnostic scheduler for jecs"
 authors = ["marked/Mark-Marks"]
-repository = "https://git.devmarked.win/marked/rubine"
+repository = "https://github.com/mark-marks/rubinee"
 license = "MIT"
 includes = ["lib", "LICENSE", "pesde.toml", "README.md"]
 
@@ -13,6 +13,12 @@ lib = "lib/init.luau"
 [indices]
 default = "https://github.com/daimond113/pesde-index"
 
+[wally_indices]
+default = "https://github.com/UpliftGames/wally-index"
+
 [dependencies]
 jecs = { name = "mark_marks/jecs_pesde", version = "^0.4.0" }
-jecs_utils = { name = "mark_marks/jecs_utils", version = "^0.1.7-rc.1" }
+
+# I don't want to keep a separate installation of wally packages for extensions
+[dev_dependencies]
+jabby = { wally = "alicesaidhi/jabby", version = "0.2.0-rc.5" }

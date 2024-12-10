@@ -1,0 +1,75 @@
+name: Release Rubine Roblox
+
+on:
+  push:
+    tags: ["rbx-v*"]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+
+      - name: Install Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Build
+        run: |
+          cd extensions/roblox
+          rojo sourcemap -o sourcemap.json
+          rojo build -o build.rbxm
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: rbx-build
+          path: rbx-build.rbxm
+
+  release:
+    name: Release
+    needs: [build]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+
+      - name: Download Build
+        uses: actions/download-artifact@v3
+        with:
+          name: rbx-build
+          path: build
+
+      - name: Rename Build
+        run: mv build/build.rbxm rubine-roblox.rbxm
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Rubine Roblox ${{ github.ref_name }}
+          files: |
+            rubine-roblox.rbxm
+
+  publish:
+    name: Publish
+    needs: [release]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Project
+        uses: actions/checkout@v4
+
+      - name: Install Rokit
+        uses: CompeyDev/setup-rokit@v0.1.2
+
+      - name: Change Working Directory
+        run: |
+          cd extensions/roblox
+
+      - name: Wally Login
+        run: wally login --token ${{ secrets.WALLY_AUTH_TOKEN }}
+
+      - name: Wally Publish
+        run: wally publish

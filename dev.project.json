@@ -6,9 +6,12 @@
     "ReplicatedStorage": {
       "Packages": {
         "$className": "Folder",
-        "$path": "packages",
+        "$path": "roblox_packages",
         "rubine": {
           "$path": "lib"
+        },
+        "rubine_roblox": {
+          "$path": "extensions/roblox"
         }
       }
     }

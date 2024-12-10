@@ -44,7 +44,7 @@ dist/
 # Wally files
 DevPackages
 Packages
-luau_packages
+**packages
 wally.lock
 WallyPatches
 

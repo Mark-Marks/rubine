@@ -1,6 +1,4 @@
 {
-  "luau-lsp.fflags.override": {
-    "LuauTinyControlFlowAnalysis": "true"
-  },
+  "luau-lsp.fflags.override": {},
   "luau-lsp.require.mode": "relativeToFile"
 }

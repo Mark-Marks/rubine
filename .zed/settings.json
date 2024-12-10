@@ -26,9 +26,7 @@
             "enabled": false
           },
           "fflags": {
-            "override": {
-              "LuauTinyControlFlowAnalysis": "true"
-            },
+            "override": {},
             "sync": true,
             "enable_by_default": false
           }
