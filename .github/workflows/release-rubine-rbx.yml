@@ -25,7 +25,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: rbx-build
-          path: rbx-build.rbxm
+          path: build.rbxm
 
   release:
     name: Release
