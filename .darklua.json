@@ -5,7 +5,7 @@
       "current": {
         "name": "path",
         "sources": {
-          "@jecs": "packages/jecs"
+          "@pkg": "luau_packages/"
         }
       },
       "target": {
