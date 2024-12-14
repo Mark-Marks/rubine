@@ -1,8 +1,8 @@
 name = "mark_marks/rubine"
-version = "0.1.0-rc.0"
+version = "0.1.0-rc.1"
 description = "An ergonomic, runtime agnostic scheduler for jecs"
 authors = ["marked/Mark-Marks"]
-repository = "https://github.com/mark-marks/rubinee"
+repository = "https://github.com/mark-marks/rubine"
 license = "MIT"
 includes = ["lib", "LICENSE", "pesde.toml", "README.md"]
 
