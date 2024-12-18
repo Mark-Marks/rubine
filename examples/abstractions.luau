@@ -1,7 +1,6 @@
 --!strict
 -- !!! NOT UNIT TESTS !!!
 local abstractions = require("@lib/abstractions")
-local world = require("@lib/world")
 
 local function tick(tick_time: number)
 	return function(run: (number) -> ())
@@ -20,7 +19,7 @@ local function tick(tick_time: number)
 	end
 end
 
--- some weird luau screwery makes `debug.info(2, "sl")` for each of these `test/abstractions.luau`
+-- Some weird luau screwery makes `debug.info(2, "sl")` for each of these `test/abstractions.luau`
 local tick_a = abstractions.pipe("tick_a")
 local tick_b = abstractions.pipe("tick_b")
 local tick_c = abstractions.pipe("tick_c")

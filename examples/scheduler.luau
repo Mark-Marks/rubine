@@ -1,7 +1,6 @@
 --!strict
 -- !!! NOT UNIT TESTS !!!
 local scheduler = require("@lib/scheduler")
-local world = require("@lib/world")
 
 local function tick(tick_time: number)
 	return function(run: (number) -> ())
@@ -21,8 +20,8 @@ local function tick(tick_time: number)
 end
 
 -- Luau deduplicates closures so each event needs to be unable to be deduplicated
-local on_tick = scheduler.phase("tick", tick(1 / 6))
-scheduler.phase("after_tick", tick(1 / 5), on_tick)
+local on_tick = scheduler.phase("tick", nil, tick(1 / 6))
+scheduler.phase("after_tick", on_tick)
 
 local function on_tick_system(dt)
 	print(`Running on tick, dt: {dt}s`)
