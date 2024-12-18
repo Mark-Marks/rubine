@@ -14,10 +14,10 @@ type Tag = Entity<nil>
 local world = require("./world")
 
 export type System = {
-	run: (...any) -> (),
-	paused: boolean,
-	frame_start: number,
-	frame_end: number,
+    run: (...any) -> (),
+    paused: boolean,
+    frame_start: number,
+    frame_end: number,
 }
 
 --- What ends up being called every frame, not the singleton itself
@@ -35,21 +35,21 @@ local PreviousSystemData: Entity<System> = pair(Previous, System)
 local Phase: Tag = world:entity()
 
 local function collect_systems_under_phase(systems: { Entity }, phase: Entity)
-	for system in world:query(System):with(pair(DependsOn, phase)):iter() do
-		table.insert(systems, system)
-	end
+    for system in world:query(System):with(pair(DependsOn, phase)):iter() do
+        table.insert(systems, system)
+    end
 
-	for dependency in world:query(Phase):with(pair(DependsOn, phase)):iter() do
-		collect_systems_under_phase(systems, dependency)
-	end
+    for dependency in world:query(Phase):with(pair(DependsOn, phase)):iter() do
+        collect_systems_under_phase(systems, dependency)
+    end
 end
 
 type Runnables = { [Event]: { Entity } }
 local function collect_runnables(existing: Runnables)
-	for phase, event in world:query(Event):with(Phase):iter() do
-		existing[event] = {}
-		collect_systems_under_phase(existing[event], phase)
-	end
+    for phase, event in world:query(Event):with(Phase):iter() do
+        existing[event] = {}
+        collect_systems_under_phase(existing[event], phase)
+    end
 end
 
 -- Faster than querying every time
@@ -60,62 +60,62 @@ local registered_phases: { [string]: Entity } = {}
 local registered_systems: { [string]: Entity } = {}
 
 local function start()
-	world:set(System, Name, "System")
-	world:set(DependsOn, Name, "DependsOn")
-	world:set(Event, Name, "Event")
-	world:set(Phase, Name, "Phase")
+    world:set(System, Name, "System")
+    world:set(DependsOn, Name, "DependsOn")
+    world:set(Event, Name, "Event")
+    world:set(Phase, Name, "Phase")
 
-	local function runner(event: Event): (...any) -> ()
-		local running_system: (...any) -> () = nil
-		local running_arguments: {} = nil
+    local function runner(event: Event): (...any) -> ()
+        local running_system: (...any) -> () = nil
+        local running_arguments: {} = nil
 
-		local function call_system()
-			running_system(unpack(running_arguments))
-		end
+        local function call_system()
+            running_system(unpack(running_arguments))
+        end
 
-		return function(...)
-			running_arguments = table.pack(...)
+        return function(...)
+            running_arguments = table.pack(...)
 
-			for _, system in runnables[event] do
-				local data = world:get(system, System)
-				if not data then
-					continue
-				end
+            for _, system in runnables[event] do
+                local data = world:get(system, System)
+                if not data then
+                    continue
+                end
 
-				if data.paused then
-					continue
-				end
+                if data.paused then
+                    continue
+                end
 
-				-- Very low cost hooks using jecs hooks and reading previous data inside them
-				world:set(system, PreviousSystemData, table.clone(data))
+                -- Very low cost hooks using jecs hooks and reading previous data inside them
+                world:set(system, PreviousSystemData, table.clone(data))
 
-				data.frame_start = os.clock()
-				running_system = data.run
-				for _ in call_system :: any do
-					break
-				end
-				data.frame_end = os.clock()
+                data.frame_start = os.clock()
+                running_system = data.run
+                for _ in call_system :: any do
+                    break
+                end
+                data.frame_end = os.clock()
 
-				-- Make sure hooks are ran
-				world:set(system, System, data)
-			end
-		end
-	end
+                -- Make sure hooks are ran
+                world:set(system, System, data)
+            end
+        end
+    end
 
-	for _, event in world:query(Event):with(Phase):iter() do
-		local run = runner(event)
-		if type(event) == "function" then
-			event(run)
-			continue
-		end
+    for _, event in world:query(Event):with(Phase):iter() do
+        local run = runner(event)
+        if type(event) == "function" then
+            event(run)
+            continue
+        end
 
-		if event.connect then
-			event:connect(run)
-			continue
-		end
+        if event.connect then
+            event:connect(run)
+            continue
+        end
 
-		event:Connect(run)
-	end
+        event:Connect(run)
+    end
 end
 
 --- Creates a phase.
@@ -125,40 +125,40 @@ end
 ---
 --- Multiple phases which are bound to the same event will be changed to elect the first phase to be created as the master phase and the rest to depend on it.
 local function create_phase(name: string, after: Entity?, event: Event?): Entity
-	if registered_phases[name] then
-		error(`[rubine] The phase {name} already exists`)
-	end
+    if registered_phases[name] then
+        error(`[rubine] The phase {name} already exists`)
+    end
 
-	if after and event then
-		error(`[rubine] Couldn't create phase {name} - a phase can only have an event or a dependency, never both.`)
-	end
+    if after and event then
+        error(`[rubine] Couldn't create phase {name} - a phase can only have an event or a dependency, never both.`)
+    end
 
-	local phase = world:entity()
-	world:add(phase, Phase)
-	if after then
-		world:add(phase, pair(DependsOn, after))
-	end
-	if event then
-		local master_phase_exists = false
-		for p, e in world:query(Event):with(Phase):iter() do
-			if event ~= e then
-				continue
-			end
+    local phase = world:entity()
+    world:add(phase, Phase)
+    if after then
+        world:add(phase, pair(DependsOn, after))
+    end
+    if event then
+        local master_phase_exists = false
+        for p, e in world:query(Event):with(Phase):iter() do
+            if event ~= e then
+                continue
+            end
 
-			world:add(phase, pair(DependsOn, p))
-			master_phase_exists = true
-			break
-		end
+            world:add(phase, pair(DependsOn, p))
+            master_phase_exists = true
+            break
+        end
 
-		if not master_phase_exists then
-			world:set(phase, Event, event)
-		end
-	end
-	world:set(phase, Name, name)
+        if not master_phase_exists then
+            world:set(phase, Event, event)
+        end
+    end
+    world:set(phase, Name, name)
 
-	registered_phases[name] = phase
+    registered_phases[name] = phase
 
-	return phase
+    return phase
 end
 
 --- Registers a system to run on the phase with the given name.
@@ -166,115 +166,115 @@ end
 --- Multiple systems with the same name cannot exist.
 --- Systems are internally named by either the function name or the script name and line number.
 local function on(phase_name: string, fn: (...any) -> ()): Entity
-	local phase = registered_phases[phase_name]
-	if not phase then
-		error(`[rubine] The phase {phase_name} doesn't exist`)
-	end
+    local phase = registered_phases[phase_name]
+    if not phase then
+        error(`[rubine] The phase {phase_name} doesn't exist`)
+    end
 
-	local name = debug.info(fn, "n")
-	if not name or string.len(name) == 0 then
-		name = debug.info(fn, "sl")
-	end
+    local name = debug.info(fn, "n")
+    if not name or string.len(name) == 0 then
+        name = debug.info(fn, "sl")
+    end
 
-	if registered_systems[name] ~= nil then
-		print(`[rubine] Tried registering system called {name} which already exists, aborting`)
-		return 0 :: Entity
-	end
+    if registered_systems[name] ~= nil then
+        print(`[rubine] Tried registering system called {name} which already exists, aborting`)
+        return 0 :: Entity
+    end
 
-	local system = world:entity()
-	world:set(system, System, {
-		run = fn,
-		paused = false,
-		frame_start = 0,
-		frame_end = 0,
-	})
-	world:add(system, pair(DependsOn, phase))
-	world:set(system, Name, name)
-	registered_systems[name] = system
+    local system = world:entity()
+    world:set(system, System, {
+        run = fn,
+        paused = false,
+        frame_start = 0,
+        frame_end = 0,
+    })
+    world:add(system, pair(DependsOn, phase))
+    world:set(system, Name, name)
+    registered_systems[name] = system
 
-	collect_runnables(runnables)
+    collect_runnables(runnables)
 
-	return system
+    return system
 end
 
 --- Removes an existing system.
 ---
 --- This function identifies systems either by their name or entity id.
 local function remove(system: string | Entity)
-	local entity = if type(system) == "number" then system else registered_systems[system]
-	if not entity then
-		print(`[rubine] Tried removing a system called {system} which doesn't exist`)
-		return
-	end
+    local entity = if type(system) == "number" then system else registered_systems[system]
+    if not entity then
+        print(`[rubine] Tried removing a system called {system} which doesn't exist`)
+        return
+    end
 
-	local name = world:get(entity, Name)
-	if not name or (type(system) == "number" and not registered_systems[name]) then
-		print(`[rubine] Tried removing a system called {system} which doesn't exist`)
-		return
-	end
-	registered_systems[name] = nil
+    local name = world:get(entity, Name)
+    if not name or (type(system) == "number" and not registered_systems[name]) then
+        print(`[rubine] Tried removing a system called {system} which doesn't exist`)
+        return
+    end
+    registered_systems[name] = nil
 
-	world:delete(entity)
+    world:delete(entity)
 
-	collect_runnables(runnables)
+    collect_runnables(runnables)
 end
 
 --- This function identifies systems either by their name or entity id.
 local function pause(system: string | Entity)
-	local entity = if type(system) == "number" then system else registered_systems[system]
-	if not entity then
-		print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
-		return
-	end
+    local entity = if type(system) == "number" then system else registered_systems[system]
+    if not entity then
+        print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+        return
+    end
 
-	local name = world:get(entity, Name)
-	if not name or (type(system) == "number" and not registered_systems[name]) then
-		print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
-		return
-	end
+    local name = world:get(entity, Name)
+    if not name or (type(system) == "number" and not registered_systems[name]) then
+        print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+        return
+    end
 
-	local data = world:get(entity, System)
-		or error(`[rubine] Irrecoverable error: system {system} doesn't have any data attached`)
-	data.paused = true
-	world:set(entity, System, data)
+    local data = world:get(entity, System)
+        or error(`[rubine] Irrecoverable error: system {system} doesn't have any data attached`)
+    data.paused = true
+    world:set(entity, System, data)
 end
 
 --- Unpauses an existing system.
 ---
 --- This function identifies systems either by their name or entity id.
 local function unpause(system: string | Entity)
-	local entity = if type(system) == "number" then system else registered_systems[system]
-	if not entity then
-		print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
-		return
-	end
+    local entity = if type(system) == "number" then system else registered_systems[system]
+    if not entity then
+        print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+        return
+    end
 
-	local name = world:get(entity, Name)
-	if not name or (type(system) == "number" and not registered_systems[name]) then
-		print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
-		return
-	end
+    local name = world:get(entity, Name)
+    if not name or (type(system) == "number" and not registered_systems[name]) then
+        print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+        return
+    end
 
-	local data = world:get(entity, System)
-		or error(`[rubine] Unrecoverable error: system {system} doesn't have any data attached`)
-	data.paused = false
-	world:set(entity, System, data)
+    local data = world:get(entity, System)
+        or error(`[rubine] Unrecoverable error: system {system} doesn't have any data attached`)
+    data.paused = false
+    world:set(entity, System, data)
 end
 
 local scheduler = {
-	start = start,
+    start = start,
 
-	phase = create_phase,
-	on = on,
-	remove = remove,
-	pause = pause,
-	unpause = unpause,
+    phase = create_phase,
+    on = on,
+    remove = remove,
+    pause = pause,
+    unpause = unpause,
 
-	System = System,
-	PreviousSystemData = PreviousSystemData,
-	DependsOn = DependsOn,
-	Event = Event,
-	Phase = Phase,
+    System = System,
+    PreviousSystemData = PreviousSystemData,
+    DependsOn = DependsOn,
+    Event = Event,
+    Phase = Phase,
 }
 
 return scheduler
