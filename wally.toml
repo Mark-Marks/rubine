@@ -1,6 +1,6 @@
 [package]
 name = "mark-marks/rubine"
-version = "0.1.0-rc.1"
+version = "0.1.0-rc.2"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 license = "MIT"

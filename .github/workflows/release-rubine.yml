@@ -62,6 +62,10 @@ jobs:
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
 
+      - name: Prepare for Distribution
+        run: |
+          lune run .lune/dist
+
       - name: Wally Login
         run: wally login --token ${{ secrets.WALLY_AUTH_TOKEN }}
 

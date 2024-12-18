@@ -17,5 +17,5 @@ include = [
 
 [dependencies]
 jecs = "ukendio/jecs@0.4.0"
-rubine = "mark-marks/rubine@0.1.0-rc.1"
+rubine = "mark-marks/rubine@=0.1.0-rc.2"
 jabby = "alicesaidhi/jabby@0.2.0-rc.5"

@@ -15,11 +15,8 @@ jobs:
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
 
-      - name: Change Working Directory
-        run: |
-          cd extensions/roblox
-
       - name: Build
+        working-directory: ./extensions/roblox
         run: |
           rojo sourcemap -o sourcemap.json
           rojo build -o build.rbxm
@@ -28,7 +25,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build
-          path: build.rbxm
+          path: ./extensions/roblox/build.rbxm
 
   release:
     name: Release
@@ -67,12 +64,10 @@ jobs:
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
 
-      - name: Change Working Directory
-        run: |
-          cd extensions/roblox
-
       - name: Wally Login
+        working-directory: ./extensions/roblox
         run: wally login --token ${{ secrets.WALLY_AUTH_TOKEN }}
 
       - name: Wally Publish
+        working-directory: ./extensions/roblox
         run: wally publish
