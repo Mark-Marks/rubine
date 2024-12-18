@@ -4,7 +4,7 @@ description = "An ergonomic, runtime agnostic scheduler for jecs"
 authors = ["marked/Mark-Marks"]
 repository = "https://github.com/mark-marks/rubine"
 license = "MIT"
-includes = ["lib", "LICENSE", "pesde.toml", "README.md"]
+includes = ["lib", "LICENSE", "pesde.toml", "README.md", ".luaurc"]
 
 [target]
 environment = "luau"

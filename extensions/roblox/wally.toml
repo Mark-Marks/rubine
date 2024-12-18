@@ -1,14 +1,14 @@
 [package]
 name = "mark-marks/rubine-roblox"
-version = "0.1.0-rc.0"
+version = "0.1.0-rc.1"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 license = "MIT"
 exclude = ["**"]
 include = [
     "default.project.json",
-    "dist",
-    "dist/**",
+    "lib",
+    "lib/**",
     "LICENSE",
     "wally.toml",
     "README.md",
