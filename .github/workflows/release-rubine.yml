@@ -69,7 +69,7 @@ jobs:
         run: wally publish
 
       - name: Pesde Login
-        run: pesde auth login --token ${{ secrets.PESDE_AUTH_TOKEN }}
+        run: pesde auth login --token "${{ secrets.PESDE_AUTH_TOKEN }}"
 
       - name: Pesde Publish
         run: pesde publish -y

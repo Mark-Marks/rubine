@@ -15,9 +15,12 @@ jobs:
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
 
-      - name: Build
+      - name: Change Working Directory
         run: |
           cd extensions/roblox
+
+      - name: Build
+        run: |
           rojo sourcemap -o sourcemap.json
           rojo build -o build.rbxm
 
