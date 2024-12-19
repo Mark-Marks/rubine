@@ -92,7 +92,7 @@ world:set(scheduler.System, jecs.OnSet, function(system_id, system_data: SystemD
 
     local previous = world:get(system_id, PreviousData)
     if not previous then
-        warn(`[rubine] Couldn't get previous system data for system with id {system_id}.`)
+        print(`[rubine] Couldn't get previous system data for system with id {system_id}.`)
         return
     end
 
