@@ -179,6 +179,8 @@ local function on(phase_name: string, fn: (...any) -> ()): Entity
     end
 
     local system = world:entity()
+    world:add(system, pair(DependsOn, phase))
+    world:set(system, Name, name)
     world:set(system, System, {
         run = fn,
         paused = false,
@@ -186,8 +188,6 @@ local function on(phase_name: string, fn: (...any) -> ()): Entity
         frame_end = 0,
         propagated = false,
     })
-    world:add(system, pair(DependsOn, phase))
-    world:set(system, Name, name)
     registered_systems[name] = system
 
     collect_runnables(runnables)
