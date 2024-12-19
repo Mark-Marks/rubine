@@ -1,5 +1,5 @@
 name = "mark_marks/rubine"
-version = "0.1.0-rc.4"
+version = "0.1.0-rc.5"
 description = "An ergonomic, runtime agnostic scheduler for jecs"
 authors = ["marked/Mark-Marks"]
 repository = "https://github.com/mark-marks/rubine"

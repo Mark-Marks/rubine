@@ -18,6 +18,7 @@ export type System = {
     paused: boolean,
     frame_start: number,
     frame_end: number,
+    propagated: boolean,
 }
 
 --- What ends up being called every frame, not the singleton itself
@@ -183,6 +184,7 @@ local function on(phase_name: string, fn: (...any) -> ()): Entity
         paused = false,
         frame_start = 0,
         frame_end = 0,
+        propagated = false,
     })
     world:add(system, pair(DependsOn, phase))
     world:set(system, Name, name)

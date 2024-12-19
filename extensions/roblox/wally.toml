@@ -1,6 +1,6 @@
 [package]
 name = "mark-marks/rubine-roblox"
-version = "0.1.0-rc.5"
+version = "0.1.0-rc.6"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 license = "MIT"
@@ -17,5 +17,5 @@ include = [
 
 [dependencies]
 jecs = "ukendio/jecs@0.4.0"
-rubine = "mark-marks/rubine@=0.1.0-rc.4"
+rubine = "mark-marks/rubine@=0.1.0-rc.5"
 jabby = "alicesaidhi/jabby@0.2.0-rc.5"

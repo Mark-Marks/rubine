@@ -38,6 +38,22 @@ local function tick_c_system(dt: number)
     print(`Running on tick_c, dt: {dt}s`)
 end
 
+abstractions.hook("SystemAdd", function(id)
+    print(`Added system {id}`)
+end)
+
+abstractions.hook("SystemCall", function(id)
+    print(`Called system {id}`)
+end)
+
+abstractions.hook("SystemChange", function(id)
+    print(`Changed system {id}`)
+end)
+
+abstractions.hook("SystemRemove", function(id)
+    print(`Removed system {id}`)
+end)
+
 local scheduler = abstractions
     .scheduler()
     :with_pipeline(tick_pipeline, tick(1 / 5))

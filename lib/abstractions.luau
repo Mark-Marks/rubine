@@ -82,11 +82,17 @@ local on_remove: { (system_id: Entity) -> () } = {}
 local on_change: { (system_id: Entity, system_data: SystemData, previous_data: SystemData) -> () } = {}
 
 world:set(scheduler.System, jecs.OnSet, function(system_id, system_data: SystemData)
-    local previous = world:get(system_id, PreviousData)
-    if previous == nil then
+    if not system_data.propagated then
         for _, hook in on_add do
             hook(system_id, system_data)
         end
+        system_data.propagated = true
+        return
+    end
+
+    local previous = world:get(system_id, PreviousData)
+    if not previous then
+        warn(`[rubine] Couldn't get previous system data for system with id {system_id}.`)
         return
     end
 
