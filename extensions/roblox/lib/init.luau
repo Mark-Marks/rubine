@@ -1,14 +1,14 @@
 --!strict
-local abstractions = require(script.Parent.rubine.abstractions)
+local abstractions = require(script.Parent.rubine).abstractions
 local jabby = require(script.Parent.jabby)
 local jecs = require(script.Parent.jecs)
-local scheduler = require(script.Parent.rubine.scheduler)
+local scheduler = require(script.Parent.rubine).scheduler
 local world = require(script.Parent.rubine.world)
 
 local RunService = game:GetService("RunService")
 
 local Name = jecs.Name
-local Phase = scheduler.Phase
+local DependsOn = scheduler.DependsOn
 local JabbySystemId = world:component()
 
 --- Loads all of the children of an instance.
@@ -111,7 +111,7 @@ local function setup()
             error(`[rubine-roblox] Failed registering system with id {id}, couldn't get system name.`)
         end
 
-        local system_phase = world:get(id, Phase)
+        local system_phase = world:target(id, DependsOn)
         if not system_phase then
             error(`[rubine-roblox] Failed registering system with id {id}, couldn't get system phase.`)
         end
