@@ -87,11 +87,9 @@ local function setup_default_phases(): {
     }
 end
 
---- Starts the scheduler and returns the jabby scheduler.
+--- Setups the scheduler and returns the jabby scheduler.
 --- Make sure to only call this once per run context.
---- If you're using the abstracted scheduler alongside this, don't call the provided `:start` method.
---- Instead, build the abstracted scheduler and only afterwards call this function.
-local function start()
+local function setup()
     -- We store this map because you can't get a component from a deleted entity.
     local id_to_jabby_id = {}
 
@@ -178,15 +176,13 @@ local function start()
         jabby_scheduler:set_system_data(old_system_data)
     end)
 
-    scheduler.start()
-
     return jabby_scheduler
 end
 
 return {
     load_children = load_children,
     load_descendants = load_descendants,
-    start = start,
+    setup = setup,
     setup_default_phases = setup_default_phases,
 
     add_jabby_world = add_jabby_world,
