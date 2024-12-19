@@ -124,39 +124,35 @@ end
 --- A phase cannot have both an event and a dependency, as that would result in duplicate systems being ran.
 ---
 --- Multiple phases which are bound to the same event will be changed to elect the first phase to be created as the master phase and the rest to depend on it.
-local function create_phase(name: string, after: Entity?, event: Event?): Entity
+local function create_phase(name: string, event_or_dependency: Entity | Event): Entity
     if registered_phases[name] then
         error(`[rubine] The phase {name} already exists`)
     end
 
-    if after and event then
-        error(`[rubine] Couldn't create phase {name} - a phase can only have an event or a dependency, never both.`)
-    end
-
     local phase = world:entity()
     world:add(phase, Phase)
-    if after then
-        world:add(phase, pair(DependsOn, after))
-    end
-    if event then
-        local master_phase_exists = false
-        for p, e in world:query(Event):with(Phase):iter() do
-            if event ~= e then
-                continue
-            end
-
-            world:add(phase, pair(DependsOn, p))
-            master_phase_exists = true
-            break
-        end
-
-        if not master_phase_exists then
-            world:set(phase, Event, event)
-        end
-    end
     world:set(phase, Name, name)
-
     registered_phases[name] = phase
+
+    if type((event_or_dependency :: any) :: number) == "number" then
+        world:add(phase, pair(DependsOn, event_or_dependency))
+        return phase
+    end
+
+    local master_phase_exists = false
+    for p, e in world:query(Event):with(Phase):iter() do
+        if event_or_dependency ~= e then
+            continue
+        end
+
+        world:add(phase, pair(DependsOn, p))
+        master_phase_exists = true
+        break
+    end
+
+    if not master_phase_exists then
+        world:set(phase, Event, event_or_dependency)
+    end
 
     return phase
 end

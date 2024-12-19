@@ -47,7 +47,7 @@ local function build_pipes(built: { Entity }, pipes: { Pipe }, event: scheduler.
     end
 
     -- Take advantage of the implicit ordering and automatic event -> master phase resolution of `scheduler.phase()` like a boss
-    local phase = scheduler.phase(this, nil, event)
+    local phase = scheduler.phase(this, event)
     table.insert(built, phase)
     if other_built then
         other_built[this] = phase
@@ -213,7 +213,7 @@ local function create_abstract_scheduler(): Scheduler
         end
 
         if not after then
-            self.built_pipes[pipe] = scheduler.phase(pipe, nil, event)
+            self.built_pipes[pipe] = scheduler.phase(pipe, event)
             return abstract_scheduler
         end
 
