@@ -3,7 +3,7 @@ local abstractions = require(script.Parent.rubine).abstractions
 local jabby = require(script.Parent.jabby)
 local jecs = require(script.Parent.jecs)
 local scheduler = require(script.Parent.rubine).scheduler
-local world = require(script.Parent.rubine.world)
+local world = require(script.Parent.rubine).world
 
 local RunService = game:GetService("RunService")
 
@@ -140,7 +140,7 @@ local function setup()
             started_at = data.frame_start,
         }
 
-        scheduler:_mark_system_frame_end(jabby_system_id)
+        jabby_scheduler:_mark_system_frame_end(jabby_system_id)
     end)
 
     abstractions.hook("SystemRemove", function(id)
