@@ -136,7 +136,7 @@ local function setup()
             return
         end
 
-        jabby_scheduler.processing_frame[id] = {
+        jabby_scheduler.processing_frame[jabby_system_id] = {
             started_at = data.frame_start,
         }
 
