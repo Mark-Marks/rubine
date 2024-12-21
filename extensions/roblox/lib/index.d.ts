@@ -1,5 +1,5 @@
-import { RubinRoblox } from "./types";
+import { RubineRoblox } from "./types";
 
 
-declare const rubinRoblox: RubinRoblox;
-export = rubinRoblox;
+declare const rubineRoblox: RubineRoblox;
+export = rubineRoblox;
