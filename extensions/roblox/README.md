@@ -33,10 +33,14 @@ end)
 
 ## Installation
 
-`rubine-roblox` is only available on wally, as it's a roblox package.
+### Wally
 1. Add it to your wally manifest
 ```toml
 [dependencies]
 rubine_roblox = "mark-marks/rubine-roblox@LATEST" # Replace LATEST with the latest version
 ```
 2. `wally install`
+
+### NPM
+1. `npm add @rbxts/rubine-roblox`
+2. `npm install`

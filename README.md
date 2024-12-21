@@ -51,6 +51,10 @@ rubine = "mark-marks/rubine@LATEST" # Replace LATEST with the latest version
 ```
 2. `wally install`
 
+### NPM
+1. `npm add @rbxts/rubine`
+2. `npm install`
+
 ## Todo
 
 Before the 0.1.0 release, the following need to be done:
