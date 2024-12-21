@@ -77,3 +77,11 @@ jobs:
 
       - name: Pesde Publish
         run: pesde publish -y
+
+      - name: Install NPM Packages
+        run: npm ci
+
+      - name: NPM Publish
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

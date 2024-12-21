@@ -61,6 +61,12 @@ jobs:
       - name: Checkout Project
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20.x"
+          registry-url: "https://registry.npmjs.org"
+
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
 
@@ -71,3 +77,13 @@ jobs:
       - name: Wally Publish
         working-directory: ./extensions/roblox
         run: wally publish
+
+      - name: Install NPM Packages
+        working-directory: ./extensions/roblox
+        run: npm ci
+
+      - name: NPM Publish
+        working-directory: ./extensions/roblox
+        run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

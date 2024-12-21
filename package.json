@@ -1,0 +1,36 @@
+{
+  "name": "@rbxts/rubine",
+  "version": "0.1.0-rc.6+ts.0",
+  "description": "An ergonomic, runtime agnostic scheduler for jecs",
+  "main": "dist/init.luau",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mark-marks/rubine.git"
+  },
+  "keywords": [],
+  "author": "Mark-Marks",
+  "contributors": [
+    "Mark-Marks",
+    "CapedBojj"
+  ],
+  "homepage": "https://github.com/mark-marks/rubine",
+  "license": "MIT",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "LICENSE",
+    "README.md"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@rbxts/jecs": "^0.4.1-rc.0"
+  },
+  "devDependencies": {
+    "@rbxts/compiler-types": "^3.0.0-types.0",
+    "@rbxts/types": "^1.0.813",
+    "roblox-ts": "^3.0.0",
+    "typescript": "^5.7.2"
+  }
+}
