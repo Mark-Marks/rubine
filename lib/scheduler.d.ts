@@ -1,4 +1,4 @@
-import { Schedular } from "./types";
+import { Scheduler } from "./types";
 
-declare const schedular: Schedular;
-export = schedular;
+declare const scheduler: Scheduler;
+export = scheduler;
