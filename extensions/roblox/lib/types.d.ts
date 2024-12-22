@@ -14,10 +14,13 @@ type FunctionConnection = () => void;
 type SnakeSignalConnection = { disconnect(): void };
 type PascalSignalConnection = { Disconnect(): void };
 type FunctionEvent<T extends unknown[]> = (run: (...args: T) => void) => FunctionConnection | void;
-type SnakeSignalEvent<T extends unknown[]> = (run: (...args: T) => void) => SnakeSignalConnection | void;
-type PascalSignalEvent<T extends unknown[]> = (run: (...args: T) => void) => PascalSignalConnection | void;
-export type Event<T extends unknown[]> = FunctionEvent<T> | SnakeSignalEvent<T> | PascalSignalEvent<T>;
-
+type SnakeSignalEvent<T extends unknown[]> = {
+    connect(run: (...args: T) => SnakeSignalConnection) : void;
+}
+type PascalSignalEvent<T extends unknown[]> = {
+    Connect(run: (...args: T) => PascalSignalConnection) : void;
+}
+type Event<T extends unknown[]> = FunctionEvent<T> | SnakeSignalEvent<T> | PascalSignalEvent<T>;
 export interface Scheduler {
     start : () => void;
     phase : (name: string, event_or_dependency: Entity | Event<unknown[]>) => Entity;
