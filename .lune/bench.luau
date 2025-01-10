@@ -8,7 +8,7 @@ local world = jecs.World.new()
 local function a() end
 
 local x = {
-	a = a,
+    a = a,
 }
 
 print(tostring(x.a))

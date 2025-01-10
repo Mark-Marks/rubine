@@ -82,6 +82,9 @@ jobs:
         working-directory: ./extensions/roblox
         run: npm ci
 
+      - name: Add shims
+        run: lune run shim
+
       - name: NPM Publish
         working-directory: ./extensions/roblox
         run: npm publish --provenance --access public

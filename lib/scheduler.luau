@@ -6,7 +6,6 @@ local pair = jecs.pair
 local Name = jecs.Name
 
 type Entity<T = nil> = jecs.Entity<T>
-type Id<T = nil> = jecs.Id<T>
 type Pair<First, Second> = jecs.Pair<First, Second>
 type World = jecs.World
 type Tag = Entity<nil>
@@ -68,10 +67,21 @@ local function start()
 
     local function runner(event: Event): (...any) -> ()
         local running_system: (...any) -> () = nil
-        local running_arguments: {} = nil
+        local running_arguments: { any } = nil
 
         local function call_system()
             running_system(unpack(running_arguments))
+        end
+
+        -- Make it as cheap as possible
+        local call_systems
+        if _G.__RUBINE_DEBUG_MODE == true then
+            call_systems = call_system
+        else
+            function call_systems()
+                for _ in call_system :: any do
+                end
+            end
         end
 
         return function(...)
@@ -92,15 +102,22 @@ local function start()
 
                 data.frame_start = os.clock()
                 running_system = data.run
-                for _ in call_system :: any do
-                    break
-                end
+                call_systems()
                 data.frame_end = os.clock()
 
                 -- Make sure hooks are ran
                 world:set(system, System, data)
             end
         end
+    end
+
+    if _G.__RUBINE_DEBUG_MODE == true then
+        print([[
+            [rubine]
+            ⚠️ DEBUG MODE IS CURRENTLY ACTIVE! ⚠️
+            This means that systems are able to yield.
+            It can lead to undesirable behavior, and therefore debug mode should be off in production to catch yielding.
+        ]])
     end
 
     for _, event in world:query(Event):with(Phase):iter() do
@@ -162,10 +179,10 @@ end
 ---
 --- Multiple systems with the same name cannot exist.
 --- Systems are internally named by either the function name or the script name and line number.
-local function on(phase_name: string, fn: (...any) -> ()): Entity
-    local phase = registered_phases[phase_name]
-    if not phase then
-        error(`[rubine] The phase {phase_name} doesn't exist`)
+local function on(phase: string | Entity, fn: (...any) -> ()): Entity
+    local entity = if type(phase) == "string" then registered_phases[phase] else phase
+    if not entity then
+        error(`[rubine] The phase {phase} doesn't exist`)
     end
 
     local name = debug.info(fn, "n")
@@ -179,7 +196,7 @@ local function on(phase_name: string, fn: (...any) -> ()): Entity
     end
 
     local system = world:entity()
-    world:add(system, pair(DependsOn, phase))
+    world:add(system, pair(DependsOn, entity))
     world:set(system, Name, name)
     world:set(system, System, {
         run = fn,

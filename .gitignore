@@ -59,3 +59,6 @@ globalTypes.d.luau
 .env
 pesde.lock
 wally.lock
+# Temporarily switching to vscode from zed, as I'm having some weird issues with zed-luau
+.vscode
+**.tgz

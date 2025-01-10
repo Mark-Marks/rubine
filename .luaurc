@@ -3,6 +3,6 @@
     "aliases": {
         "lib": "lib",
         "pkg": "luau_packages",
-        "lune": ".lune/.lune-defs",
+        "lune": ".lune/.lune-defs"
     }
 }

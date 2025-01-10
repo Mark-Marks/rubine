@@ -2,6 +2,10 @@
 local abstractions = require(script.Parent.rubine).abstractions
 local jabby = require(script.Parent.jabby)
 local jecs = require(script.Parent.jecs)
+-- There are no guarantees the jecs package will have anything exported
+type Entity<T = nil> = number & {
+    __T: T,
+}
 local scheduler = require(script.Parent.rubine).scheduler
 local world = require(script.Parent.rubine).world
 
@@ -62,28 +66,32 @@ end
 --- `pre_simulation`: `RunService.PreSimulation`
 --- `post_simulation`: `RunService.PostSimulation`
 local function setup_default_phases(): {
-    heartbeat: "heartbeat",
-    pre_render: "pre_render",
-    pre_animation: "pre_animation",
-    pre_simulation: "pre_simulation",
-    post_simulation: "post_simulation",
+    heartbeat: Entity,
+    pre_render: Entity,
+    pre_animation: Entity,
+    pre_simulation: Entity,
+    post_simulation: Entity,
 }
     local is_client = RunService:IsClient()
 
+    local pre_render
     if is_client then
-        scheduler.phase("pre_render", RunService.PreRender)
+        pre_render = scheduler.phase("pre_render", RunService.PreRender)
+    else
+        pre_render = 0
     end
-    scheduler.phase("heartbeat", RunService.Heartbeat)
-    scheduler.phase("pre_animation", RunService.PreAnimation)
-    scheduler.phase("pre_simulation", RunService.PreSimulation)
-    scheduler.phase("post_simulation", RunService.PostSimulation)
+
+    local heartbeat = scheduler.phase("heartbeat", RunService.Heartbeat)
+    local pre_animation = scheduler.phase("pre_animation", RunService.PreAnimation)
+    local pre_simulation = scheduler.phase("pre_simulation", RunService.PreSimulation)
+    local post_simulation = scheduler.phase("post_simulation", RunService.PostSimulation)
 
     return {
-        heartbeat = "heartbeat",
-        pre_render = "pre_render",
-        pre_animation = "pre_animation",
-        pre_simulation = "pre_simulation",
-        post_simulation = "post_simulation",
+        heartbeat = heartbeat,
+        pre_render = pre_render,
+        pre_animation = pre_animation,
+        pre_simulation = pre_simulation,
+        post_simulation = post_simulation,
     }
 end
 

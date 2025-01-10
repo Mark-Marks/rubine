@@ -1,5 +1,5 @@
 name = "mark_marks/rubine"
-version = "0.1.0-rc.6"
+version = "0.1.0-rc.7"
 description = "An ergonomic, runtime agnostic scheduler for jecs"
 authors = ["marked/Mark-Marks"]
 repository = "https://github.com/mark-marks/rubine"
@@ -17,7 +17,11 @@ default = "https://github.com/daimond113/pesde-index"
 default = "https://github.com/UpliftGames/wally-index"
 
 [dependencies]
-jecs = { name = "mark_marks/jecs_pesde", version = "^0.4.0" }
+jecs = { name = "mark_marks/jecs_pesde", version = "^0.4.0" } # 0.5 uses type functions, and therefore the new solver
+# unfortunately, supporting the new type solver would mean a full rewrite or hacky workarounds to make it happy at the moment -
+# - it's not great on existing projects
+# i'll update it once it matures a bit more
+
 
 # I don't want to keep a separate installation of wally packages for extensions
 [dev_dependencies]
