@@ -1,6 +1,8 @@
 --!strict
 --!native
 --!optimize 2
+--# selene: allow(global_usage)
+--# selene: allow(empty_loop)
 local jecs = require("@pkg/jecs")
 local pair = jecs.pair
 local Name = jecs.Name
