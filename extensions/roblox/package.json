@@ -1,6 +1,6 @@
 {
   "name": "@rbxts/rubine-roblox",
-  "version": "0.1.0-rc.12-ts.0",
+  "version": "0.1.0-rc.12-ts.1",
   "description": "A roblox extension for the ergonomic, runtime agnostic jecs scheduler",
   "main": "lib/init.luau",
   "repository": {

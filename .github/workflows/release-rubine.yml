@@ -79,7 +79,7 @@ jobs:
         run: pesde publish -y
 
       - name: Install NPM Packages
-        run: npm ci
+        run: npm install
 
       - name: Add shims
         run: lune run shim

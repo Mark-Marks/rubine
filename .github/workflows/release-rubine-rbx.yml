@@ -80,7 +80,7 @@ jobs:
 
       - name: Install NPM Packages
         working-directory: ./extensions/roblox
-        run: npm ci
+        run: npm install
 
       - name: Add shims
         run: lune run shim
