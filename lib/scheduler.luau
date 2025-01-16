@@ -47,8 +47,9 @@ local function collect_systems_under_phase(systems: { Entity }, phase: Entity)
 end
 
 type Runnables = { [Event]: { Entity } }
+local PHASES = world:query(Event):with(Phase):cached()
 local function collect_runnables(existing: Runnables)
-    for phase, event in world:query(Event):with(Phase):iter() do
+    for phase, event in PHASES:iter() do
         existing[event] = {}
         collect_systems_under_phase(existing[event], phase)
     end
@@ -122,7 +123,7 @@ local function start()
         ]])
     end
 
-    for _, event in world:query(Event):with(Phase):iter() do
+    for _, event in PHASES:iter() do
         local run = runner(event)
         if type(event) == "function" then
             event(run)
@@ -160,7 +161,7 @@ local function create_phase(name: string, event_or_dependency: Entity | Event): 
     end
 
     local master_phase_exists = false
-    for p, e in world:query(Event):with(Phase):iter() do
+    for p, e in PHASES:iter() do
         if event_or_dependency ~= e then
             continue
         end
