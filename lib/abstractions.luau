@@ -1,6 +1,7 @@
 --!strict
 --!native
 --!optimize 2
+--# selene: allow(global_usage)
 local jecs = require("@pkg/jecs")
 type Entity<T = nil> = jecs.Entity<T>
 
