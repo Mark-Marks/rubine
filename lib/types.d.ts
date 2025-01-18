@@ -61,38 +61,6 @@ export type Hookable =
   | "SystemAdd"
   | "SystemRemove"
   | "SystemChange";
-export type AbstractionsSystem<T extends unknown[]> = (...args: T) => void;
-export interface AbstractionScheduler {
-  readonly started: boolean;
-  readonly system_names: Map<AbstractionsSystem<unknown[]>, string>;
-  readonly build_pipes: Map<Pipe, Entity>;
-  readonly built_pipelines: Map<Pipeline<unknown[]>, Array<Entity>>;
-  with_pipeline(
-    pipeline: Pipeline<unknown[]>,
-    event: Event<unknown[]>,
-    after?: Pipe | Pipeline<unknown[]>,
-  ): AbstractionScheduler;
-  with_pipe(
-    pipe: Pipe,
-    event: Event<unknown[]>,
-    after?: Pipe | Pipeline<unknown[]>,
-  ): AbstractionScheduler;
-  with_systems(
-    systems: Array<AbstractionsSystem<unknown[]>>,
-    pipe: Pipe,
-  ): AbstractionScheduler;
-  with_system(
-    system: AbstractionsSystem<unknown[]>,
-    pipe: Pipe,
-  ): AbstractionScheduler;
-  pause_system(
-    system: string | AbstractionsSystem<unknown[]>,
-  ): AbstractionScheduler;
-  unpause_system(
-    system: string | AbstractionsSystem<unknown[]>,
-  ): AbstractionScheduler;
-  start(): AbstractionScheduler;
-}
 type systemCallHook = (
   system_id: Entity,
   system_data: SchedulerSystem,
@@ -112,7 +80,6 @@ export interface Abstractions {
   pipe: (name?: string) => Pipe;
   pipeline: () => Pipeline<unknown[]>;
   hook: <T extends Hookable>(on: T, hook: hook<T>) => void;
-  Scheduler: () => AbstractionScheduler;
 }
 
 // path: lib/index.luau

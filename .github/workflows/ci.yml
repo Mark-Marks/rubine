@@ -75,7 +75,7 @@ jobs:
 
       - name: Run Unit Tests
         run: |
-          output=$(luau tests/unit.luau)
+          output=$(lune run tests/unit.luau)
           echo "$output"
           if [[ "$output" == *"0 fails"* ]]; then
             echo "Unit Tests Passed"
