@@ -1,4 +1,4 @@
-import { Rubin } from "./types";
+import { Rubine } from "./types";
 
-declare const rubin: Rubin;
-export = rubin;
+declare const rubine: Rubine;
+export = rubine;

@@ -194,8 +194,7 @@ local function on(phase: string | Entity, fn: (...any) -> ()): Entity
     end
 
     if registered_systems[name] ~= nil then
-        print(`[rubine] Tried registering system called {name} which already exists, aborting`)
-        return 0 :: Entity
+        error(`[rubine] Tried registering system called {name} which already exists`)
     end
 
     local system = world:entity()
@@ -221,13 +220,21 @@ end
 local function remove(system: string | Entity)
     local entity = if type(system) == "number" then system else registered_systems[system]
     if not entity then
-        print(`[rubine] Tried removing a system called {system} which doesn't exist`)
+        if _G.__RUBINE_DEBUG_MODE == true then
+            error(`[rubine] Tried removing a system called {system} which doesn't exist`)
+        else
+            print(`[rubine] Tried removing a system called {system} which doesn't exist`)
+        end
         return
     end
 
     local name = world:get(entity, Name)
     if not name or (type(system) == "number" and not registered_systems[name]) then
-        print(`[rubine] Tried removing a system called {system} which doesn't exist`)
+        if _G.__RUBINE_DEBUG_MODE == true then
+            error(`[rubine] Tried removing a system called {system} which doesn't exist`)
+        else
+            print(`[rubine] Tried removing a system called {system} which doesn't exist`)
+        end
         return
     end
     registered_systems[name] = nil
@@ -241,13 +248,21 @@ end
 local function pause(system: string | Entity)
     local entity = if type(system) == "number" then system else registered_systems[system]
     if not entity then
-        print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+        if _G.__RUBINE_DEBUG_MODE == true then
+            error(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+        else
+            print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+        end
         return
     end
 
     local name = world:get(entity, Name)
     if not name or (type(system) == "number" and not registered_systems[name]) then
-        print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+        if _G.__RUBINE_DEBUG_MODE == true then
+            error(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+        else
+            print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+        end
         return
     end
 
@@ -263,13 +278,21 @@ end
 local function unpause(system: string | Entity)
     local entity = if type(system) == "number" then system else registered_systems[system]
     if not entity then
-        print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+        if _G.__RUBINE_DEBUG_MODE == true then
+            error(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+        else
+            print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+        end
         return
     end
 
     local name = world:get(entity, Name)
     if not name or (type(system) == "number" and not registered_systems[name]) then
-        print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+        if _G.__RUBINE_DEBUG_MODE == true then
+            error(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+        else
+            print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+        end
         return
     end
 
