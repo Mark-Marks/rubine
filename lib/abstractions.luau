@@ -269,7 +269,11 @@ local function create_abstract_scheduler(): Scheduler
         if type(system) == "function" then
             local name = self.system_names[system]
             if not name then
-                print(`[rubine] Tried pausing system with function address {tostring(system)} which doesn't exist`)
+                if _G.__RUBINE_DEBUG_MODE == true then
+                    error(`[rubine] Tried pausing system with function address {tostring(system)} which doesn't exist`)
+                else
+                    print(`[rubine] Tried pausing system with function address {tostring(system)} which doesn't exist`)
+                end
                 return abstract_scheduler
             end
 
@@ -286,7 +290,15 @@ local function create_abstract_scheduler(): Scheduler
         if type(system) == "function" then
             local name = self.system_names[system]
             if not name then
-                print(`[rubine] Tried unpausing system with function address {tostring(system)} which doesn't exist`)
+                if _G.__RUBINE_DEBUG_MODE == true then
+                    error(
+                        `[rubine] Tried unpausing system with function address {tostring(system)} which doesn't exist`
+                    )
+                else
+                    print(
+                        `[rubine] Tried unpausing system with function address {tostring(system)} which doesn't exist`
+                    )
+                end
                 return abstract_scheduler
             end
 
