@@ -139,7 +139,7 @@ rubine = "mark-marks/rubine@LATEST" # Replace LATEST with the latest version
 1. `npm add @rbxts/rubine`
 2. `npm install`
 
-## Mentions
+## Honorable Mentions
 
-Abstractions were inspired by the ecs agnostic [Planck scheduler](https://github.com/YetAnotherClown/Planck)
-Logo was kindly created by [alice](https://github.com/alicesaidhi)
+- Abstractions were inspired by the ecs agnostic [Planck scheduler](https://github.com/YetAnotherClown/Planck).
+- Logo was kindly created by [alice](https://github.com/alicesaidhi).
