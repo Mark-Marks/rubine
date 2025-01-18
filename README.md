@@ -15,40 +15,119 @@ An ergonomic, runtime agnostic scheduler for [Jecs](https://github.com/ukendio/j
 
 ## Features
 
-Rubine provides two schedulers - one with a fairly low level interface abstracting over directly adding entities and setting components,
-and another abstracting over the low level one, with a "higher level" scheduler and utilities for phases.
+### 1. Phases
+Rubine uses phases to bind systems to events and order them.
 
-Both can be used alongside each other, although some abstractions require to be "built" first.
+Phases live in rubine's Jecs world, having the `Phase` tag, and either the `Event` component or a dependant pair (`pair(DependsOn, another_phase)`).
 
-In the case of pipes, they have to be either included within the abstracted scheduler
+Phases can be ordered implicitly:
 ```luau
-abstracted_scheduler
-    :with_pipe(my_pipe, my_event)
+local event = signal()
+local my_phase = scheduler.phase("my_phase", event)
+local my_phase_b = scheduler.phase("my_phase_b", event) -- Ordered after `my_phase`
 ```
-or registered as a phase
+or explicitly:
 ```luau
-scheduler.phase(my_pipe, my_event)
+local event = signal()
+local my_phase = scheduler.phase("my_phase", event)
+local my_phase_b = scheduler.phase("my_phase_b", my_phase) -- Ordered after `my_phase`
+```
+Multiple phases cannot be bound to the same event, but instead depend on one another.
+
+### 2. Systems
+Systems are bound to phases. Whenever an event the system is (indirectly) on is fired, it's ran.
+
+Systems live in rubine's Jecs world, having the `System` component describing it, and a pair describing what phase it runs on (`pair(DependsOn, phase)`).
+
+Systems are created with `scheduler.on`:
+```luau
+local function system()
+end
+
+local my_system = scheduler.on(my_phase, system)
+```
+can have their execution paused:
+```luau
+scheduler.pause(my_system)
+```
+and unpaused:
+```luau
+scheduler.unpause(my_system)
 ```
 
-In the case of pipelines, they have to be either included within the abstracted scheduler
+Systems also contain data about the moment they started running and ended, being reset on every run.
 ```luau
-abstracted_scheduler
-    :with_pipeline(my_pipeline, my_event)
-```
-or built
-```luau
-my_pipeline:build(my_event)
+type System = {
+    run: (...any) -> (),
+    paused: boolean,
+    frame_start: number,
+    frame_end: number,
+}
 ```
 
-The abstracted scheduler starts the low level one by itself, so don't use both start functions together.
+Systems cannot yield without `_G.__RUBINE_DEBUG_MODE` being true.
+
+### 3. Hooks
+Hooks are available via the `abstractions` module.
+Under the hood, they use Jecs hooks to observe changes to the world and run user defined callbacks on them.
+
+With them, you can hook onto system calls
+```luau
+abstractions.hook("SystemCall", function(system_id: Entity, system_data: System, previous_data: System)
+end)
+```
+system additions
+```luau
+abstractions.hook("SystemAdd", function(system_id: Entity, system_data: System)
+end)
+```
+system removals
+```luau
+abstractions.hook("SystemRemove", function(system_id: Entity)
+end)
+```
+and all system changes
+```luau
+abstractions.hook("SystemChange", function(systme_id: Entity, system_data: System, previous_data: System)
+end)
+```
+
+### 4. Pipes
+Pipes are a tiny abstraction over phases, mainly meant to be used with pipelines.
+All pipe names are unique, being the script name and the line number of where they were defined.
+```luau
+local my_pipe = abstractions.pipe()
+scheduler.phase(my_pipe, event)
+```
+
+### 5. Pipelines
+Pipelines are an abstraction over phases, allowing for handy implicit ordering.
+```luau
+local pipe_a = abstractions.pipe()
+local pipe_b = abstractions.pipe()
+local pipe_c = abstractions.pipe()
+
+-- Pipe A is bound to the given event
+-- Pipe B depends on Pipe A
+-- Pipe C depends on Pipe B
+abstractions.pipeline()
+    :with(pipe_a)
+    :with(pipe_b)
+    :with(pipe_c)
+    :build(event)
+```
 
 ## Installation
 
 ### Pesde
-1. `pesde add mark_marks/rubine` -- In case of release candidates, do `pesde add mark_marks/rubine@VERSION-rc.WHICH_RC`
+Available for use in standalone luau.
+
+1. `pesde add mark_marks/rubine`
 2. `pesde install`
 
 ### Wally
+Available for use in Roblox.
+
 1. Add it to your wally manifest
 ```toml
 [dependencies]
@@ -56,22 +135,11 @@ rubine = "mark-marks/rubine@LATEST" # Replace LATEST with the latest version
 ```
 2. `wally install`
 
-### NPM
+### NPM (roblox-ts)
 1. `npm add @rbxts/rubine`
 2. `npm install`
 
-## Todo
+## Honorable Mentions
 
-Before the 0.1.0 release, the following need to be done:
-
-- [ ] Unit tests
-- [x] Automatic CI & CD
-- [x] Packaging
-  - [x] Pesde luau package
-  - [x] Wally roblox package
-- [x] Extensibility
-- [x] Built-in Roblox scheduling extension
-
-## Mentions
-
-Abstractions were inspired by the ecs agnostic [Planck scheduler](https://github.com/YetAnotherClown/Planck)
+- Abstractions were inspired by the ecs agnostic [Planck scheduler](https://github.com/YetAnotherClown/Planck).
+- Logo was kindly created by [alice](https://github.com/alicesaidhi).

@@ -62,7 +62,11 @@ local registered_phases: { [string]: Entity } = {}
 -- Faster than querying every time
 local registered_systems: { [string]: Entity } = {}
 
+local started = false
 local function start()
+    assert(not started, "Cannot start the scheduler twice")
+    started = true
+
     world:set(System, Name, "System")
     world:set(DependsOn, Name, "DependsOn")
     world:set(Event, Name, "Event")
@@ -139,6 +143,18 @@ local function start()
     end
 end
 
+local function get_farthest_dependant(master: Entity): (Entity, number)
+    local farthest, by = master, 1
+    for dependant in world:query(pair(DependsOn, master)):iter() do
+        local this_farthest, this_by = get_farthest_dependant(dependant)
+        if this_farthest and (by + this_by) > by then
+            farthest = this_farthest
+            by += this_by
+        end
+    end
+    return farthest, by
+end
+
 --- Creates a phase.
 ---
 --- Phases must either be bound to an event, or depend on another phase, which if gone up the dependency tree will result in a phase with an event.
@@ -166,7 +182,8 @@ local function create_phase(name: string, event_or_dependency: Entity | Event): 
             continue
         end
 
-        world:add(phase, pair(DependsOn, p))
+        local farthest_dependant = get_farthest_dependant(p)
+        world:add(phase, pair(DependsOn, farthest_dependant))
         master_phase_exists = true
         break
     end
@@ -188,9 +205,15 @@ local function on(phase: string | Entity, fn: (...any) -> ()): Entity
         error(`[rubine] The phase {phase} doesn't exist`)
     end
 
+    local phase_name = world:get(entity, Name)
+    if not phase_name or not registered_phases[phase_name] then
+        error(`[rubine] The phase {phase} doesn't exist`)
+    end
+
     local name = debug.info(fn, "n")
     if not name or string.len(name) == 0 then
-        name = debug.info(fn, "sl")
+        local _name: string, _line: string = debug.info(fn, "sl")
+        name = `{_name}:{_line}`
     end
 
     if registered_systems[name] ~= nil then

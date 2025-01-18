@@ -42,6 +42,6 @@ rubine_roblox = "mark-marks/rubine-roblox@LATEST" # Replace LATEST with the late
 ```
 2. `wally install`
 
-### NPM
+### NPM (roblox-ts)
 1. `npm add @rbxts/rubine-roblox`
 2. `npm install`

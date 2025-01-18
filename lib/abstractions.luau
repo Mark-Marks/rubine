@@ -16,7 +16,14 @@ export type Pipe = string
 --- Abstraction over phases.
 --- Need to be registered with the low level scheduler in order to be used in it.
 local function create_pipe(name: string?): Pipe
-    return name or debug.info(2, "sl")
+    local pipe_name
+    if name then
+        pipe_name = name
+    else
+        local _name, _line = debug.info(2, "sl")
+        pipe_name = `{_name}:{_line}`
+    end
+    return pipe_name
 end
 
 --- An ordered set of pipes (phases).
@@ -91,10 +98,10 @@ world:set(scheduler.System, jecs.OnSet, function(system_id, system_data: SystemD
         return
     end
 
-    local previous = world:get(system_id, PreviousData)
+    local previous: SystemData = world:get(system_id, PreviousData) :: any
     if not previous then
-        print(`[rubine] Couldn't get previous system data for system with id {system_id}.`)
-        return
+        world:set(system_id, PreviousData, system_data)
+        previous = system_data
     end
 
     for _, hook in on_change do
@@ -137,205 +144,10 @@ end :: ((
     hook: (system_id: Entity, system_data: SystemData, previous_data: SystemData) -> ()
 ) -> ()) & ((on: "SystemAdd", hook: (system_id: Entity, system_data: SystemData) -> ()) -> ()) & ((on: "SystemRemove", hook: (system_id: Entity) -> ()) -> ())
 
-export type System<T... = ...any> = (T...) -> ()
-
---- An abstraction over the low level scheduler under `rubine/scheduler`.
---- Mutually exclusive with `rubine/scheduler`.
-export type Scheduler = {
-    --- @readonly Is the scheduler started?
-    started: boolean,
-    --- @readonly Map of system functions to names
-    system_names: { [System]: string },
-    --- @readonly Map of pipe names to phases
-    built_pipes: { [Pipe]: Entity },
-    --- @readonly Map of pipelines to their built phases
-    built_pipelines: { [Pipeline]: { Entity } },
-
-    --- Builds the given pipeline ordering explicitly by the given pipe / pipeline or implicitly.
-    with_pipeline: (
-        self: Scheduler,
-        pipeline: Pipeline,
-        event: scheduler.Event,
-        after: Pipe | Pipeline?
-    ) -> Scheduler,
-    --- Builds the given pipe ordering explicitly by the given pipe / pipeline or implicitly.
-    with_pipe: (self: Scheduler, pipe: Pipe, event: scheduler.Event, after: (Pipe | Pipeline)?) -> Scheduler,
-    --- Registers all of the given systems under the given pipe.
-    with_systems: (self: Scheduler, systems: { System }, pipe: Pipe) -> Scheduler,
-    --- Registers the given system under the given pipe.
-    with_system: (self: Scheduler, system: System, pipe: Pipe) -> Scheduler,
-
-    --- Pauses the system with the given function or name.
-    pause_system: (self: Scheduler, system: string | System) -> Scheduler,
-    --- Unpauses the system with the given function or name.
-    unpause_system: (self: Scheduler, system: string | System) -> Scheduler,
-
-    --- Starts the scheduler.
-    start: (self: Scheduler) -> Scheduler,
-}
-
---- Creates an abstracted scheduler.
-local function create_abstract_scheduler(): Scheduler
-    local abstract_scheduler = {
-        started = false,
-        system_names = {},
-        built_pipes = {},
-        built_pipelines = {},
-    } :: Scheduler
-
-    function abstract_scheduler:with_pipeline(pipeline, event, after)
-        if self.built_pipelines[pipeline] then
-            error(`[rubine] Tried building pipeline {pipeline} which is already built`)
-        end
-
-        if not after then
-            self.built_pipelines[pipeline] = pipeline:build(event, self.built_pipes)
-            return abstract_scheduler
-        end
-
-        if type(after) == "string" then
-            local phase = self.built_pipes[after]
-            if not phase then
-                error(`[rubine] Tried building pipeline {pipeline} after pipe {after} which isn't built`)
-            end
-
-            self.built_pipelines[pipeline] = pipeline:build(event, self.built_pipes, phase)
-            return abstract_scheduler
-        end
-
-        local dependency_pipeline = self.built_pipelines[after]
-        if not dependency_pipeline then
-            error(`[rubine] Tried building pipeline {pipeline} after pipeline {after} which isn't built`)
-        end
-
-        local last_pipe = dependency_pipeline[#dependency_pipeline]
-        self.built_pipelines[pipeline] = pipeline:build(event, self.built_pipes, last_pipe)
-
-        return abstract_scheduler
-    end
-
-    function abstract_scheduler:with_pipe(pipe, event, after)
-        if self.built_pipes[pipe] then
-            error(`[rubine] Tried building pipe {pipe} which is already built`)
-        end
-
-        if not after then
-            self.built_pipes[pipe] = scheduler.phase(pipe, event)
-            return abstract_scheduler
-        end
-
-        if type(after) == "string" then
-            local phase = self.built_pipes[after]
-            if not phase then
-                error(`[rubine] Tried building pipe {pipe} after pipe {after} which isn't built`)
-            end
-
-            self.built_pipes[pipe] = scheduler.phase(pipe, phase)
-            return abstract_scheduler
-        end
-
-        local dependency_pipeline = self.built_pipelines[after]
-        if not dependency_pipeline then
-            error(`[rubine] Tried building pipe {pipe} after pipeline {after} which isn't built`)
-        end
-
-        local last_pipe = dependency_pipeline[#dependency_pipeline]
-        self.built_pipes[pipe] = scheduler.phase(pipe, last_pipe)
-
-        return abstract_scheduler
-    end
-
-    function abstract_scheduler:with_systems(systems, pipe)
-        for _, system in systems do
-            self:with_system(system, pipe)
-        end
-        return abstract_scheduler
-    end
-
-    function abstract_scheduler:with_system(system, pipe)
-        if self.system_names[system] then
-            error(`[rubine] Tried registering system with function address {tostring(system)} which already exists`)
-        end
-
-        local system_id = scheduler.on(pipe, system)
-        local system_name = world:get(system_id, jecs.Name)
-        if not system_name then
-            error(`[rubine] Unrecoverable error, couldn't get system name from id`)
-        end
-        self.system_names[system] = system_name
-        return abstract_scheduler
-    end
-
-    function abstract_scheduler:pause_system(system)
-        if type(system) == "function" then
-            local name = self.system_names[system]
-            if not name then
-                if _G.__RUBINE_DEBUG_MODE == true then
-                    error(`[rubine] Tried pausing system with function address {tostring(system)} which doesn't exist`)
-                else
-                    print(`[rubine] Tried pausing system with function address {tostring(system)} which doesn't exist`)
-                end
-                return abstract_scheduler
-            end
-
-            scheduler.pause(name)
-            return abstract_scheduler
-        end
-
-        scheduler.pause(system)
-
-        return abstract_scheduler
-    end
-
-    function abstract_scheduler:unpause_system(system)
-        if type(system) == "function" then
-            local name = self.system_names[system]
-            if not name then
-                if _G.__RUBINE_DEBUG_MODE == true then
-                    error(
-                        `[rubine] Tried unpausing system with function address {tostring(system)} which doesn't exist`
-                    )
-                else
-                    print(
-                        `[rubine] Tried unpausing system with function address {tostring(system)} which doesn't exist`
-                    )
-                end
-                return abstract_scheduler
-            end
-
-            scheduler.unpause(name)
-            return abstract_scheduler
-        end
-
-        scheduler.unpause(system)
-
-        return abstract_scheduler
-    end
-
-    function abstract_scheduler:start()
-        if self.started then
-            print("[rubine] Tried to start the scheduler more than once, continuing")
-            return abstract_scheduler
-        end
-
-        self.started = true
-        table.freeze(self.system_names)
-        table.freeze(self.built_pipelines)
-        table.freeze(self.built_pipes)
-
-        scheduler.start()
-
-        return abstract_scheduler
-    end
-
-    return abstract_scheduler
-end
-
 local abstractions = {
     pipe = create_pipe,
     pipeline = create_pipeline,
     hook = hook_on,
-    scheduler = create_abstract_scheduler,
 }
 
 return abstractions

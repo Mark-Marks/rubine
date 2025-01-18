@@ -1,5 +1,5 @@
 name = "mark_marks/rubine"
-version = "0.1.0-rc.8"
+version = "0.1.0"
 description = "An ergonomic, runtime agnostic scheduler for jecs"
 authors = ["marked/Mark-Marks"]
 repository = "https://github.com/mark-marks/rubine"
@@ -17,12 +17,8 @@ default = "https://github.com/daimond113/pesde-index"
 default = "https://github.com/UpliftGames/wally-index"
 
 [dependencies]
-jecs = { name = "mark_marks/jecs_pesde", version = "^0.5.2" }
-
+jecs = { name = "mark_marks/jecs_pesde", version = "^0.5.3" }
 
 # I don't want to keep a separate installation of wally packages for extensions
 [dev_dependencies]
 jabby = { wally = "alicesaidhi/jabby", version = "0.2.0-rc.5" }
-
-[patches]
-"mark_marks/jecs_pesde" = { "0.5.2 luau" = "patches/mark_marks+jecs_pesde-0.5.2+luau.patch" }

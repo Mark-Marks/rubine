@@ -1,6 +1,6 @@
 [package]
 name = "mark-marks/rubine"
-version = "0.1.0-rc.8"
+version = "0.2.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 license = "MIT"
@@ -16,4 +16,4 @@ include = [
 ]
 
 [dependencies]
-jecs = "ukendio/jecs@0.5.2"
+jecs = "ukendio/jecs@0.5.3"
