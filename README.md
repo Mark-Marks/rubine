@@ -15,7 +15,7 @@ An ergonomic, runtime agnostic scheduler for [Jecs](https://github.com/ukendio/j
 
 ## Features
 
-1. Phases
+### 1. Phases
 Rubine uses phases to bind systems to events and order them.
 
 Phases live in rubine's Jecs world, having the `Phase` tag, and either the `Event` component or a dependant pair (`pair(DependsOn, another_phase)`).
@@ -33,7 +33,8 @@ local my_phase = scheduler.phase("my_phase", event)
 local my_phase_b = scheduler.phase("my_phase_b", my_phase) -- Ordered after `my_phase`
 ```
 Multiple phases cannot be bound to the same event, but instead depend on one another.
-2. Systems
+
+### 2. Systems
 Systems are bound to phases. Whenever an event the system is (indirectly) on is fired, it's ran.
 
 Systems live in rubine's Jecs world, having the `System` component describing it, and a pair describing what phase it runs on (`pair(DependsOn, phase)`).
@@ -65,7 +66,8 @@ type System = {
 ```
 
 Systems cannot yield without `_G.__RUBINE_DEBUG_MODE` being true.
-3. Hooks
+
+### 3. Hooks
 Hooks are available via the `abstractions` module.
 Under the hood, they use Jecs hooks to observe changes to the world and run user defined callbacks on them.
 
@@ -89,14 +91,16 @@ and all system changes
 abstractions.hook("SystemChange", function(systme_id: Entity, system_data: System, previous_data: System)
 end)
 ```
-4. Pipes
+
+### 4. Pipes
 Pipes are a tiny abstraction over phases, mainly meant to be used with pipelines.
 All pipe names are unique, being the script name and the line number of where they were defined.
 ```luau
 local my_pipe = abstractions.pipe()
 scheduler.phase(my_pipe, event)
 ```
-5. Pipelines
+
+### 5. Pipelines
 Pipelines are an abstraction over phases, allowing for handy implicit ordering.
 ```luau
 local pipe_a = abstractions.pipe()
