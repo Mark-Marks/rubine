@@ -90,6 +90,6 @@ jobs:
 
       - name: NPM Publish
         working-directory: ./extensions/roblox
-        run: npm publish --provenance --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
