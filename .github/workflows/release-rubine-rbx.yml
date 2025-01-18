@@ -3,6 +3,7 @@ name: Release Rubine Roblox
 on:
   push:
     tags: ["rbx-v*"]
+  workflow_dispatch:
 
 jobs:
   build:
