@@ -122,7 +122,7 @@ abstractions.pipeline()
 ### Pesde
 Available for use in standalone luau.
 
-1. `pesde add mark_marks/rubine`
+1. `pesde add marked/rubine`
 2. `pesde install`
 
 ### Wally
