@@ -30,7 +30,7 @@
   "dependencies": {
     "@rbxts/jecs": "^0.5.3",
     "@rbxts/rubine": "^0.2.0-ts.0",
-    "@rbxts/jabby": "=0.2.0-rc.7"
+    "@rbxts/jabby": "0.2.0-rc.8"
   },
   "devDependencies": {
     "@rbxts/compiler-types": "^3.0.0-types.0",

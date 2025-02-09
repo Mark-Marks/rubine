@@ -42,14 +42,15 @@ local function load_descendants(parent: Instance)
 end
 
 --- Adds a world to jabby.
-local function add_jabby_world(world: jecs.World, named: string)
-    table.insert(jabby.public, {
-        class_name = "World",
+local function add_jabby_world(world: jecs.World, named: string, debug_component: Entity<any>?)
+    jabby.register({
+        applet = jabby.applets.world,
         name = named,
-        world = world,
-        debug = Name,
+        configuration = {
+            world = world,
+            debug = debug_component or Name,
+        },
     })
-    jabby.public.updated = true
 end
 
 --- Sets the traffic check function in jabby.
@@ -95,23 +96,31 @@ local function setup_default_phases(): {
     }
 end
 
+local RUN_CONTEXT = RunService:IsServer() and "server" or "client"
+
 --- Setups the scheduler and returns the jabby scheduler.
 --- Make sure to only call this once per run context.
 local function setup()
     -- We store this map because you can't get a component from a deleted entity.
     local id_to_jabby_id = {}
 
-    table.insert(jabby.public, {
-        class_name = "World",
+    jabby.register({
+        applet = jabby.applets.world,
         name = "rubine-world",
-        world = world,
-        debug = Name,
+        configuration = {
+            world = world,
+            debug = Name,
+        },
     })
-    jabby.public.updated = true
 
-    local jabby_scheduler = jabby.scheduler.create("rubine-roblox")
-    table.insert(jabby.public, jabby_scheduler)
-    jabby.public.updated = true
+    local jabby_scheduler = jabby.scheduler.create()
+    jabby.register({
+        name = `rubine-roblox-{RUN_CONTEXT}`,
+        applet = jabby.applets.scheduler,
+        configuration = {
+            scheduler = jabby_scheduler :: any,
+        },
+    })
 
     abstractions.hook("SystemAdd", function(id, data)
         local system_name = world:get(id, Name)
@@ -181,7 +190,7 @@ local function setup()
 
         old_system_data.paused = data.paused
         -- Make sure the changes are registered
-        jabby_scheduler:set_system_data(old_system_data)
+        jabby_scheduler:set_system_data(id, old_system_data)
     end)
 
     return jabby_scheduler

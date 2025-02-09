@@ -10,6 +10,13 @@
         "rubine": {
           "$path": "lib"
         }
+      },
+      "RobloxPackages": {
+        "$className": "Folder",
+        "$path": "roblox_packages",
+        "rubine_roblox": {
+          "$path": "extensions/roblox/lib"
+        }
       }
     }
   }
