@@ -88,7 +88,7 @@ end)
 ```
 and all system changes
 ```luau
-abstractions.hook("SystemChange", function(systme_id: Entity, system_data: System, previous_data: System)
+abstractions.hook("SystemChange", function(system_id: Entity, system_data: System, previous_data: System)
 end)
 ```
 
