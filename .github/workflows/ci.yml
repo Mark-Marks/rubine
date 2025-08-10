@@ -38,7 +38,7 @@ jobs:
 
       - name: Check Code Style
         run: |
-          stylua --check --respect-ignores src/
+          stylua --check --respect-ignores lib/
 
   test:
     name: Unit Testing
@@ -48,7 +48,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Install Zune
-        uses: ./actions/install-zune
+        uses: ./.github/actions/install-zune
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifact: 3729562409

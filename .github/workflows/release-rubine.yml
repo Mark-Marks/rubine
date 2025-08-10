@@ -19,7 +19,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Zune
-        uses: ./actions/install-zune
+        uses: ./.github/actions/install-zune
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifact: 3729562409
@@ -76,7 +76,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install Zune
-        uses: ./actions/install-zune
+        uses: ./.github/actions/install-zune
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           artifact: 3729562409
