@@ -1,12 +1,10 @@
 {
-  "process": [
+  "rules": [
     {
       "rule": "convert_require",
       "current": {
         "name": "path",
-        "sources": {
-          "@pkg": "luau_packages/"
-        }
+        "use_luau_configuration": true
       },
       "target": {
         "name": "roblox",

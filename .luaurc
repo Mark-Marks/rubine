@@ -1,8 +1,7 @@
 {
     "languageMode": "strict",
     "aliases": {
-        "lib": "lib",
-        "pkg": "luau_packages",
-        "lune": ".lune/.lune-defs"
+        "lib": "./lib/",
+        "pkg": "./luau_packages/"
     }
 }

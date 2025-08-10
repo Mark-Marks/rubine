@@ -24,9 +24,18 @@ export type System = {
 
 --- What ends up being called every frame, not the singleton itself
 type FunctionEvent<T... = ...any> = ((T...) -> ()) -> any?
-type SnakeSignalEvent<T... = ...any> = { connect: (self: SnakeSignalEvent<T...>, (T...) -> ()) -> any?, [any]: any }
-type PascalSignalEvent<T... = ...any> = { Connect: (self: PascalSignalEvent<T...>, (T...) -> ()) -> any?, [any]: any }
-export type Event<T... = ...any> = FunctionEvent<T...> | SnakeSignalEvent<T...> | PascalSignalEvent<T...>
+type SnakeSignalEvent<T... = ...any> = {
+    connect: (self: SnakeSignalEvent<T...>, (T...) -> ()) -> any?,
+    [any]: any,
+}
+type PascalSignalEvent<T... = ...any> = {
+    Connect: (self: PascalSignalEvent<T...>, (T...) -> ()) -> any?,
+    [any]: any,
+}
+export type Event<T... = ...any> =
+    FunctionEvent<T...>
+    | SnakeSignalEvent<T...>
+    | PascalSignalEvent<T...>
 
 local System: Entity<System> = world:component()
 local DependsOn: Entity<Entity> = world:component()
@@ -161,7 +170,10 @@ end
 --- A phase cannot have both an event and a dependency, as that would result in duplicate systems being ran.
 ---
 --- Multiple phases which are bound to the same event will be changed to elect the first phase to be created as the master phase and the rest to depend on it.
-local function create_phase(name: string, event_or_dependency: Entity | Event): Entity
+local function create_phase(
+    name: string,
+    event_or_dependency: Entity | Event
+): Entity
     if registered_phases[name] then
         error(`[rubine] The phase {name} already exists`)
     end
@@ -200,7 +212,9 @@ end
 --- Multiple systems with the same name cannot exist.
 --- Systems are internally named by either the function name or the script name and line number.
 local function on(phase: string | Entity, fn: (...any) -> ()): Entity
-    local entity = if type(phase) == "string" then registered_phases[phase] else phase
+    local entity = if type(phase) == "string"
+        then registered_phases[phase]
+        else phase
     if not entity then
         error(`[rubine] The phase {phase} doesn't exist`)
     end
@@ -217,7 +231,9 @@ local function on(phase: string | Entity, fn: (...any) -> ()): Entity
     end
 
     if registered_systems[name] ~= nil then
-        error(`[rubine] Tried registering system called {name} which already exists`)
+        error(
+            `[rubine] Tried registering system called {name} which already exists`
+        )
     end
 
     local system = world:entity()
@@ -241,22 +257,34 @@ end
 ---
 --- This function identifies systems either by their name or entity id.
 local function remove(system: string | Entity)
-    local entity = if type(system) == "number" then system else registered_systems[system]
+    local entity = if type(system) == "number"
+        then system
+        else registered_systems[system]
     if not entity then
         if _G.__RUBINE_DEBUG_MODE == true then
-            error(`[rubine] Tried removing a system called {system} which doesn't exist`)
+            error(
+                `[rubine] Tried removing a system called {system} which doesn't exist`
+            )
         else
-            print(`[rubine] Tried removing a system called {system} which doesn't exist`)
+            print(
+                `[rubine] Tried removing a system called {system} which doesn't exist`
+            )
         end
         return
     end
 
     local name = world:get(entity, Name)
-    if not name or (type(system) == "number" and not registered_systems[name]) then
+    if
+        not name or (type(system) == "number" and not registered_systems[name])
+    then
         if _G.__RUBINE_DEBUG_MODE == true then
-            error(`[rubine] Tried removing a system called {system} which doesn't exist`)
+            error(
+                `[rubine] Tried removing a system called {system} which doesn't exist`
+            )
         else
-            print(`[rubine] Tried removing a system called {system} which doesn't exist`)
+            print(
+                `[rubine] Tried removing a system called {system} which doesn't exist`
+            )
         end
         return
     end
@@ -269,28 +297,42 @@ end
 
 --- This function identifies systems either by their name or entity id.
 local function pause(system: string | Entity)
-    local entity = if type(system) == "number" then system else registered_systems[system]
+    local entity = if type(system) == "number"
+        then system
+        else registered_systems[system]
     if not entity then
         if _G.__RUBINE_DEBUG_MODE == true then
-            error(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+            error(
+                `[rubine] Tried pausing a system called {system} which doesn't exist`
+            )
         else
-            print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+            print(
+                `[rubine] Tried pausing a system called {system} which doesn't exist`
+            )
         end
         return
     end
 
     local name = world:get(entity, Name)
-    if not name or (type(system) == "number" and not registered_systems[name]) then
+    if
+        not name or (type(system) == "number" and not registered_systems[name])
+    then
         if _G.__RUBINE_DEBUG_MODE == true then
-            error(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+            error(
+                `[rubine] Tried pausing a system called {system} which doesn't exist`
+            )
         else
-            print(`[rubine] Tried pausing a system called {system} which doesn't exist`)
+            print(
+                `[rubine] Tried pausing a system called {system} which doesn't exist`
+            )
         end
         return
     end
 
     local data = world:get(entity, System)
-        or error(`[rubine] Irrecoverable error: system {system} doesn't have any data attached`)
+        or error(
+            `[rubine] Irrecoverable error: system {system} doesn't have any data attached`
+        )
     data.paused = true
     world:set(entity, System, data)
 end
@@ -299,28 +341,42 @@ end
 ---
 --- This function identifies systems either by their name or entity id.
 local function unpause(system: string | Entity)
-    local entity = if type(system) == "number" then system else registered_systems[system]
+    local entity = if type(system) == "number"
+        then system
+        else registered_systems[system]
     if not entity then
         if _G.__RUBINE_DEBUG_MODE == true then
-            error(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+            error(
+                `[rubine] Tried unpausing a system called {system} which doesn't exist`
+            )
         else
-            print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+            print(
+                `[rubine] Tried unpausing a system called {system} which doesn't exist`
+            )
         end
         return
     end
 
     local name = world:get(entity, Name)
-    if not name or (type(system) == "number" and not registered_systems[name]) then
+    if
+        not name or (type(system) == "number" and not registered_systems[name])
+    then
         if _G.__RUBINE_DEBUG_MODE == true then
-            error(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+            error(
+                `[rubine] Tried unpausing a system called {system} which doesn't exist`
+            )
         else
-            print(`[rubine] Tried unpausing a system called {system} which doesn't exist`)
+            print(
+                `[rubine] Tried unpausing a system called {system} which doesn't exist`
+            )
         end
         return
     end
 
     local data = world:get(entity, System)
-        or error(`[rubine] Unrecoverable error: system {system} doesn't have any data attached`)
+        or error(
+            `[rubine] Unrecoverable error: system {system} doesn't have any data attached`
+        )
     data.paused = false
     world:set(entity, System, data)
 end

@@ -19,6 +19,5 @@ default = "https://github.com/UpliftGames/wally-index"
 [dependencies]
 jecs = { name = "mark_marks/jecs_pesde", version = "^0.5.3" }
 
-# I don't want to keep a separate installation of wally packages for extensions
 [dev_dependencies]
 jabby = { wally = "alicesaidhi/jabby", version = "0.2.0-rc.9" }

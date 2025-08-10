@@ -44,7 +44,12 @@ export type Pipeline = {
     pipes: { Pipe },
 }
 
-local function build_pipes(built: { Entity }, pipes: { Pipe }, event: scheduler.Event, other_built: { [Pipe]: Entity }?)
+local function build_pipes(
+    built: { Entity },
+    pipes: { Pipe },
+    event: scheduler.Event,
+    other_built: { [Pipe]: Entity }?
+)
     local this = table.remove(pipes, 1)
     if not this then
         return
@@ -84,36 +89,54 @@ local function create_pipeline(): Pipeline
     return pipeline
 end
 
-local on_call: { (system_id: Entity, system_data: SystemData, previous_data: SystemData) -> () } = {}
+local on_call: {
+    (
+        system_id: Entity,
+        system_data: SystemData,
+        previous_data: SystemData
+    ) -> ()
+} =
+    {}
 local on_add: { (system_id: Entity, system_data: SystemData) -> () } = {}
 local on_remove: { (system_id: Entity) -> () } = {}
-local on_change: { (system_id: Entity, system_data: SystemData, previous_data: SystemData) -> () } = {}
+local on_change: {
+    (
+        system_id: Entity,
+        system_data: SystemData,
+        previous_data: SystemData
+    ) -> ()
+} =
+    {}
 
-world:set(scheduler.System, jecs.OnSet, function(system_id, system_data: SystemData)
-    if not system_data.propagated then
-        for _, hook in on_add do
-            hook(system_id, system_data)
+world:set(
+    scheduler.System,
+    jecs.OnSet,
+    function(system_id, system_data: SystemData)
+        if not system_data.propagated then
+            for _, hook in on_add do
+                hook(system_id, system_data)
+            end
+            system_data.propagated = true
+            return
         end
-        system_data.propagated = true
-        return
-    end
 
-    local previous: SystemData = world:get(system_id, PreviousData) :: any
-    if not previous then
-        world:set(system_id, PreviousData, system_data)
-        previous = system_data
-    end
+        local previous: SystemData = world:get(system_id, PreviousData) :: any
+        if not previous then
+            world:set(system_id, PreviousData, system_data)
+            previous = system_data
+        end
 
-    for _, hook in on_change do
-        hook(system_id, system_data, previous)
-    end
-
-    if previous.frame_end ~= system_data.frame_end then
-        for _, hook in on_call do
+        for _, hook in on_change do
             hook(system_id, system_data, previous)
         end
+
+        if previous.frame_end ~= system_data.frame_end then
+            for _, hook in on_call do
+                hook(system_id, system_data, previous)
+            end
+        end
     end
-end)
+)
 
 world:set(scheduler.System, jecs.OnRemove, function(system_id)
     for _, hook in on_remove do
@@ -141,8 +164,18 @@ local hook_on = function(on: Hookable, hook: any)
     end
 end :: ((
     on: "SystemCall" | "SystemChange",
-    hook: (system_id: Entity, system_data: SystemData, previous_data: SystemData) -> ()
-) -> ()) & ((on: "SystemAdd", hook: (system_id: Entity, system_data: SystemData) -> ()) -> ()) & ((on: "SystemRemove", hook: (system_id: Entity) -> ()) -> ())
+    hook: (
+        system_id: Entity,
+        system_data: SystemData,
+        previous_data: SystemData
+    ) -> ()
+) -> ()) & ((
+    on: "SystemAdd",
+    hook: (system_id: Entity, system_data: SystemData) -> ()
+) -> ()) & ((
+    on: "SystemRemove",
+    hook: (system_id: Entity) -> ()
+) -> ())
 
 local abstractions = {
     pipe = create_pipe,
