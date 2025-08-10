@@ -14,6 +14,21 @@ do
     local subbed = string.gsub(jecs_path, '"', "")
     local direct = string.match(subbed, "%.pesde.+")
         or error("Couldn't get direct path for jecs")
+
+    -- debugging
+    print(
+        `linker source:\n{linker_source}\njecs path: {jecs_path}\nsubbed: {subbed}\ndirect: {direct}`
+    )
+
+    print("luau_packages traversal start--")
+    require("../scripts/lib/util/fs").traverse(
+        "luau_packages",
+        function(path, name, metadata)
+            print(`[{metadata.kind}] {path}`)
+        end
+    )
+    print("luau_packages traversal end--")
+
     local source = fs.readFile(`luau_packages/{direct}.luau`)
     JECS_BYTECODE = luau.compile(source)
 end
