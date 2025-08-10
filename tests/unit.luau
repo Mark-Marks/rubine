@@ -3,7 +3,7 @@
 -- stylua: ignore start
 local make_custom_require = require("./custom_require")
 local signal = require("./signal")
-local task = require("@lune/task")
+local task = zune.task
 
 type Entity<T = nil> = number & { __T: T }
 
@@ -281,7 +281,7 @@ TEST("scheduler.start()", function()
 
         local ok = pcall(function()
             local function SYSTEM_1()
-                require("@lune/task").wait()
+                zune.task.wait()
             end
             scheduler.on(p1, SYSTEM_1)
 

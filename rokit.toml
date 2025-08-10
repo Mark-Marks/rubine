@@ -5,11 +5,9 @@
 
 [tools]
 wally = "upliftgames/wally@0.3.2"
-rojo = "rojo-rbx/rojo@7.4.4"
-lune = "lune-org/lune@0.8.9"
-selene = "kampfkarren/selene@0.27.1"
-luau-lsp = "johnnymorganz/luau-lsp@1.37.0"                      # https://discord.com/channels/385151591524597761/1259775232533856327/1326154624335347732
-stylua = "johnnymorganz/stylua@2.0.2"
-wally-package-types = "johnnymorganz/wally-package-types@1.4.1"
-darklua = "seaofvoices/darklua@0.15.0"
-pesde = "pesde-pkg/pesde@0.5.3+registry.0.1.2"
+rojo = "rojo-rbx/rojo@7.5.1"
+selene = "kampfkarren/selene@0.29.0"
+luau-lsp = "johnnymorganz/luau-lsp@1.53.1"
+stylua = "johnnymorganz/stylua@2.1.0"
+darklua = "seaofvoices/darklua@0.16.0"
+pesde = "pesde-pkg/pesde@0.7.0+registry.0.2.3"

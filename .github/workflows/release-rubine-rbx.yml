@@ -15,9 +15,10 @@ jobs:
 
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
+        with:
+          token: ${{ SECRETS.GITHUB_TOKEN }}
 
       - name: Build
-        working-directory: ./extensions/roblox
         run: |
           rojo sourcemap -o sourcemap.json
           rojo build -o build.rbxm
@@ -72,6 +73,8 @@ jobs:
 
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
+        with:
+          token: ${{ SECRETS.GITHUB_TOKEN }}
 
       - name: Wally Login
         working-directory: ./extensions/roblox
@@ -86,7 +89,7 @@ jobs:
         run: npm install
 
       - name: Add shims
-        run: lune run shim
+        run: zune run scripts/shim
 
       - name: NPM Publish
         working-directory: ./extensions/roblox

@@ -15,10 +15,18 @@ jobs:
 
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Zune
+        uses: ./.github/actions/install-zune
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact: 3729562409
 
       - name: Build
         run: |
-          lune run build
+          zune run scripts/build
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
@@ -64,10 +72,18 @@ jobs:
 
       - name: Install Rokit
         uses: CompeyDev/setup-rokit@v0.1.2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Zune
+        uses: ./.github/actions/install-zune
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          artifact: 3729562409
 
       - name: Prepare for Distribution
         run: |
-          lune run .lune/dist
+          zune run scripts/build
 
       - name: Wally Login
         run: wally login --token ${{ secrets.WALLY_AUTH_TOKEN }}
@@ -85,7 +101,7 @@ jobs:
         run: npm install
 
       - name: Add shims
-        run: lune run shim
+        run: zune run scripts/shim
 
       - name: NPM Publish
         run: npm publish --access public

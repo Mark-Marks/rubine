@@ -1,6 +1,6 @@
 --!strict
 return {
-    scheduler = require("./scheduler"),
-    abstractions = require("./abstractions"),
-    world = require("./world"),
+    scheduler = require("@self/scheduler"),
+    abstractions = require("@self/abstractions"),
+    world = require("@self/world"),
 }
