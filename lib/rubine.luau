@@ -287,7 +287,7 @@ const function run_pipelines(
                 columns[FrameData],
                 columns[PreviousFrameData]
 
-            for row, system in system_entities do
+            for row in system_entities do
                 local it = it_columns[row]
                 it.delta_time = delta_time
 

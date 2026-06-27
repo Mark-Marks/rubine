@@ -1,3 +1,5 @@
+--# selene: allow(undefined_variable)
+
 export type function writeable(t: type): type
     if t.tag ~= "table" then
         return t
@@ -99,6 +101,7 @@ export type function is_one_of(ty: type, allowed_pack: type)
     return types.never
 end
 
+-- selene: allow(unused_variable)
 export type function ecs_field_return(
     component: type,
     query_cts: type,

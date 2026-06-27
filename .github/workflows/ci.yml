@@ -22,7 +22,7 @@ jobs:
 
       - name: Build
         run: |
-          zune run scripts/build
+          rojo build default.project.json -o rubine.rbxm
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
