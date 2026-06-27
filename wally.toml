@@ -13,8 +13,8 @@ include = [
     "wally.toml",
     "README.md",
     "DESIGN.md",
-    "CHANGELOG.md"
-    ".luaurc",
+    "CHANGELOG.md",
+    ".luaurc"
 ]
 
 [dependencies]
