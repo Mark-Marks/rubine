@@ -1,6 +1,6 @@
 {
   "name": "rubine",
   "tree": {
-    "$path": "dist"
+    "$path": "lib"
   }
 }

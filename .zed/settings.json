@@ -12,26 +12,25 @@
               "enabled": true,
               "suggestRequires": true,
               "stringRequires": {
-                "enabled": true
-              }
-            }
+                "enabled": true,
+              },
+            },
           },
-          "ignoreGlobs": ["types/**"]
+          "ignoreGlobs": ["types/**", "scripts/**"],
         },
-        "ext": {
-          "definitions": ["./scripts/zune.d.luau"],
-          "fflags": {
-            "enable_new_solver": false
-          },
-          "roblox": {
-            "enabled": true,
-            "security_level": "roblox_script"
-          },
-          "binary": {
-            "ignore_system_version": false
-          }
-        }
-      }
+        "definitions": ["./types/zune.d.luau"],
+        "documentation": ["./types/zune.d.json"],
+        "fflags": {
+          "enable_new_solver": true,
+        },
+        "roblox": {
+          "enabled": false,
+          "security_level": "roblox_script",
+        },
+        "binary": {
+          "ignore_system_version": false,
+        },
+      },
     },
     "json-language-server": {
       "settings": {
@@ -39,31 +38,32 @@
           "schemas": [
             {
               "fileMatch": ["*/.luaurc"],
-              "url": "https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/refs/heads/main/editors/code/schemas/luaurc.json"
+              "url": "https://raw.githubusercontent.com/JohnnyMorganz/luau-lsp/refs/heads/main/editors/code/schemas/luaurc.json",
             },
             {
               "fileMatch": ["*.project.json"],
-              "url": "https://raw.githubusercontent.com/rojo-rbx/vscode-rojo/refs/heads/master/schemas/project.template.schema.json"
-            }
-          ]
-        }
-      }
-    }
+              "url": "https://raw.githubusercontent.com/rojo-rbx/vscode-rojo/refs/heads/master/schemas/project.template.schema.json",
+            },
+          ],
+        },
+      },
+    },
   },
   "file_types": {
     "Luau": ["lua"],
-    "JSON": [".luaurc"]
+    "JSON": [".luaurc"],
   },
   "languages": {
     "Luau": {
       "formatter": {
         "external": {
           "command": "stylua",
-          "arguments": ["--respect-ignores", "-"]
-        }
+          "arguments": ["--respect-ignores", "-"],
+        },
       },
-      "format_on_save": "on"
-    }
+      "format_on_save": "on",
+    },
   },
-  "disable_ai": true
+  // Eat shit and die AI features
+  "disable_ai": true,
 }

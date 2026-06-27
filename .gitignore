@@ -44,8 +44,9 @@ dist/
 # Wally files
 DevPackages
 Packages
-**packages
+luau_packages
 wally.lock
+pesde.lock
 WallyPatches
 
 # Typescript
@@ -56,9 +57,6 @@ WallyPatches
 roblox.toml
 sourcemap.json
 globalTypes.d.luau
-.env
-pesde.lock
-wally.lock
-# Temporarily switching to vscode from zed, as I'm having some weird issues with zed-luau
-.vscode
-**.tgz
+jecs_src.luau
+rubine-*.tar
+rubine-*.zip

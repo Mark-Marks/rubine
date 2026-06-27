@@ -1,7 +1,6 @@
 {
-    "languageMode": "strict",
-    "aliases": {
-        "lib": "./lib/",
-        "pkg": "./luau_packages/"
-    }
+  "languageMode": "strict",
+  "aliases": {
+    "pkg": "./luau_packages/"
+  }
 }

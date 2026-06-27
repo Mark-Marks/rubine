@@ -1,23 +1,17 @@
 name = "marked/rubine"
-version = "0.2.0"
+version = "0.3.0-alpha.0"
 description = "An ergonomic, runtime agnostic scheduler for jecs"
-authors = ["marked/Mark-Marks"]
+authors = ["marked"]
 repository = "https://github.com/mark-marks/rubine"
 license = "MIT"
-includes = ["lib", "LICENSE", "pesde.toml", "README.md", ".luaurc"]
+includes = ["lib", "LICENSE", "pesde.toml", "README.md", "DESIGN.md", "CHANGELOG.md", ".luaurc"]
 
 [target]
 environment = "luau"
 lib = "lib/init.luau"
 
 [indices]
-default = "https://github.com/daimond113/pesde-index"
-
-[wally_indices]
-default = "https://github.com/UpliftGames/wally-index"
+default = "https://github.com/pesde-pkg/index"
 
 [dependencies]
-jecs = { name = "mark_marks/jecs_pesde", version = "^0.5.3" }
-
-[dev_dependencies]
-jabby = { wally = "alicesaidhi/jabby", version = "0.2.0-rc.9" }
+jecs = { name = "marked/jecs", version = "^0.11.0" }

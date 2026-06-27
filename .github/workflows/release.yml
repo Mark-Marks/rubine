@@ -1,4 +1,4 @@
-name: Release Rubine
+name: Release
 
 on:
   push:
@@ -18,21 +18,15 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Zune
-        uses: ./.github/actions/install-zune
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifact: 3729562409
-
       - name: Build
         run: |
-          zune run scripts/build
+          rojo build default.project.json -o rubine.rbxm
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
           name: build
-          path: build.rbxm
+          path: rubine.rbxm
 
   release:
     name: Release
@@ -50,11 +44,11 @@ jobs:
           name: build
           path: build
 
-      - name: Rename Build
-        run: mv build/build.rbxm rubine.rbxm
+      - name: Move Build
+        run: mv build/rubine.rbxm rubine.rbxm
 
       - name: Create Release
-        uses: softprops/action-gh-release@v1
+        uses: softprops/action-gh-release@v2
         with:
           name: Rubine ${{ github.ref_name }}
           files: |
@@ -64,8 +58,6 @@ jobs:
     name: Publish
     needs: [release]
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
     steps:
       - name: Checkout Project
         uses: actions/checkout@v4
@@ -75,15 +67,10 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install Zune
-        uses: ./.github/actions/install-zune
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifact: 3729562409
-
-      - name: Prepare for Distribution
+      - name: Set Linker
         run: |
-          zune run scripts/build
+          mv jecs.luau pesde_linker.luau
+          mv wally_linker.luau jecs.luau
 
       - name: Wally Login
         run: wally login --token ${{ secrets.WALLY_AUTH_TOKEN }}
@@ -91,19 +78,13 @@ jobs:
       - name: Wally Publish
         run: wally publish
 
+      - name: Set Linker
+        run: |
+          mv jecs.luau wally_linker.luau
+          mv pesde_linker.luau jecs.luau
+
       - name: Pesde Login
         run: pesde auth login --token "${{ secrets.PESDE_AUTH_TOKEN }}"
 
       - name: Pesde Publish
         run: pesde publish -y
-
-      - name: Install NPM Packages
-        run: npm install
-
-      - name: Add shims
-        run: zune run scripts/shim
-
-      - name: NPM Publish
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
