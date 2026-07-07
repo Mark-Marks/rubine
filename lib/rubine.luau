@@ -149,9 +149,23 @@ end
 
 type SystemBuilder = {
     read query_terms: <QueryTerms...>(QueryTerms...) -> SystemBuilder,
+    read query_tags: <QueryTags...>(QueryTags...) -> SystemBuilder,
+    read query_excludes: <QueryExcludes...>(QueryExcludes...) -> SystemBuilder,
     read singletons: <Singletons...>(Singletons...) -> SystemBuilder,
     read id: () -> jecs.Entity,
 }
+
+export type TermMarker<T = any> =
+    { id: jecs.Id<T>, kind: "has" }
+    | { id: jecs.Id<T>, kind: "not" }
+
+const function has_marker<T>(id: jecs.Id<T>): { id: jecs.Id<T>, kind: "has" }
+    return { id = id, kind = "has" }
+end
+
+const function not_marker<T>(id: jecs.Id<T>): { id: jecs.Id<T>, kind: "not" }
+    return { id = id, kind = "not" }
+end
 
 --- Registers a system with the given callback and phase.
 --- Returns a builder, which allows for query terms and singletons to be added.
@@ -183,12 +197,62 @@ const function register_system<QueryTerms..., Singletons...>(
     const builder = {}
 
     const function with_query_terms<QueryTerms...>(...: QueryTerms...): SystemBuilder
-        const query = world:query(... :: any)
+        local query_terms: { jecs.Id } = {}
+        local has_terms: { jecs.Id<nil> } = {}
+        local exclude_terms: { jecs.Id } = {}
+
+        const terms = table.pack(... :: any)
+        for i = 1, #terms do
+            local term = terms[i]
+            if type(term) ~= "table" then
+                table.insert(query_terms, term)
+                continue
+            end
+            term = term :: TermMarker
+
+            const terms_ref = if term.kind == "has"
+                then has_terms
+                elseif term.kind == "not" then exclude_terms
+                else error("Invalid term marker")
+            table.insert(terms_ref, term.id)
+        end
+
+        const query = world:query(table.unpack(query_terms))
+
+        if #has_terms > 0 then
+            query:with(table.unpack(has_terms))
+        end
+
+        if #exclude_terms > 0 then
+            query:without(table.unpack(exclude_terms))
+        end
+
         world:set(system, scheduler.Query, query)
 
         return builder
     end
     builder.query_terms = with_query_terms
+
+    const function with_query_tags<QueryTags...>(...: QueryTags...): SystemBuilder
+        const query = world:get(system, scheduler.Query)
+        assert(query, "Query terms must be added to a system before it's tags")
+        query:with(... :: any)
+
+        return builder
+    end
+    builder.query_tags = with_query_tags
+
+    const function with_query_excludes<QueryExcludes...>(...: QueryExcludes...): SystemBuilder
+        const query = world:get(system, scheduler.Query)
+        assert(
+            query,
+            "Query terms must be added to a system before it's exclusions"
+        )
+        query:without(... :: any)
+
+        return builder
+    end
+    builder.query_excludes = with_query_excludes
 
     const function with_singletons<Singletons...>(...: Singletons...): SystemBuilder
         it.singletons = {}
@@ -347,6 +411,8 @@ end
 
 return table.freeze {
     ecs_field = ecs_field,
+    has_marker = has_marker,
+    not_marker = not_marker,
 
     scheduler = construct_scheduler,
     phase = construct_phase,

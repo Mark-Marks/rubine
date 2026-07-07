@@ -10,5 +10,6 @@ export type FrameData = rubine.FrameData
 export type Phase = rubine.Phase
 export type Pipeline = rubine.Pipeline
 export type Stepper = rubine.Stepper
+export type TermMarker = rubine.TermMarker
 
 return rubine

@@ -3,7 +3,7 @@ const scheduler = rubine.scheduler()
 const phase = rubine.phase(scheduler)
 
 const ecs_field = rubine.ecs_field
--- This gets called for every single archetype matching a query of (Position, Velocity, BoundingBox)
+-- This gets called for every single archetype matching a query of (Position, Velocity, BoundingBox) with tag KinematicBody and without tag Anchored
 -- The singleton Physics is also passed each time
 -- The generics passed to rubine.it may be ommited for QOL --- passing them simply narrows down the type of ecs_field to make sure nothing unintentional can be done
 -- However, you may find that for singletons, without the aforementioned generics you'll have to type cast the result of ecs_field to the value type of each singleton
@@ -22,8 +22,18 @@ const function move_bodies(it: rubine.it<(Position, Velocity, BoundingBox), (Phy
 end
 -- These aren't strictly typed due to current limitations of the new solver
 rubine.system(scheduler, move_bodies, phase)
-    .with_query_terms(Position, Velocity, BoundingBox)
-    .with_singletons(Physics)
+    .query_terms(Position, Velocity, BoundingBox)
+    .query_tags(KinematicBody)
+    .query_excludes(Anchored)
+    .singletons(Physics)
+
+-- Alternatively, we can set all terms with one function using term markers
+const Has = rubine.has_marker
+const Not = rubine.not_marker
+
+rubine.system(scheduler, move_bodies, phase)
+    .query_terms(Position, Velocity, BoundingBox, Has(KinematicBody), Not(Anchored))
+    .singletons(Physics)
 
 const stepper = rubine.stepper(function(step)
     const connection = RunService.Heartbeat:Connect(function(dt)

@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0-alpha.2] - 2026-06-07
+
+### Added
+
+- The system builder now accepts query tags (`query:with(...)`) and query excludes (`query:without(...)`) via `system_builder.with_tags` and `system_builder.with_excludes` respectively.
+- Term markers `rubine.has_marker` and `rubine.not_marker`, which allow for adding query tags and excludes via `system_builder.query_terms`.
+
 ## [0.3.0-alpha.1] - 2026-06-27
 
 ### Fixed
