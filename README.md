@@ -35,6 +35,12 @@ Refer to [the design document](/DESIGN.md) for now, documentation will be added 
 
 &nbsp;
 
+## 🔗 Attributions
+
+Thank you to @alicesaidhi for the logo.
+
+&nbsp;
+
 ## ⚖️ License
 
 This project is licensed under the terms of the MIT license. To further explore the terms, read [here](/LICENSE).
